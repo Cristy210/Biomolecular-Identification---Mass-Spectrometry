@@ -208,9 +208,6 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	 return runs
 end
 
-# ╔═╡ 05e4b893-cc8e-49eb-b2e0-2df804d1f06e
-
-
 # ╔═╡ 7515a10d-58db-41a0-87f6-cbd1a25f5d7d
 fill(2, 2)
 
@@ -261,6 +258,9 @@ N_clipped = Noise[1:273, :]
 # ╔═╡ 3ad96e81-9fbb-41ec-8714-9b75678879a7
 B1_N_Clipped = vcat(D, N_clipped)
 
+# ╔═╡ 05e4b893-cc8e-49eb-b2e0-2df804d1f06e
+permutedims(B1_N_Clipped)
+
 # ╔═╡ a874456f-58a9-4d2e-9864-d80df5312d53
 results = batch_KSS(permutedims(B1_N_Clipped), fill(2, 2); niters=200, nruns=100)
 
@@ -302,7 +302,7 @@ end
 
 
 # ╔═╡ Cell order:
-# ╟─253941dc-a2db-11ef-3f8d-7bff3a38c73c
+# ╠═253941dc-a2db-11ef-3f8d-7bff3a38c73c
 # ╟─6a16b1ba-4922-4371-a1a6-400557cc40e7
 # ╠═05602255-cb32-4da9-9198-1c75528cf61d
 # ╟─65edf46e-a573-466d-90d9-d92929d66961
