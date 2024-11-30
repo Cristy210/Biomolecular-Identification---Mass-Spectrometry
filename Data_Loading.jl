@@ -189,7 +189,7 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	D, N = size(X)
 	runs = Vector{Tuple{Vector{Matrix{Float64}}, Vector{Int}, Float64}}(undef, nruns)
 	@progress for idx in 1:nruns
-		U, c = cachet(joinpath(CACHEDIR, "run-$idx.bson")) do
+		U, c = cachet(joinpath(CACHEDIR, "run-$(Agent)_$(file_path)_$idx.bson")) do
 			Random.seed!(idx)
 			KSS(X, d; niters=niters)
 		end
@@ -210,6 +210,24 @@ end
 
 # ╔═╡ 7515a10d-58db-41a0-87f6-cbd1a25f5d7d
 fill(2, 2)
+
+# ╔═╡ a874456f-58a9-4d2e-9864-d80df5312d53
+results = batch_KSS(permutedims(B), fill(2, 2); niters=200, nruns=100)
+
+# ╔═╡ 66bcee83-71e6-4e24-bd43-21fa0a2d56f0
+unique(results[1][2])
+
+# ╔═╡ 9dbb856f-6746-4425-9bcf-8f6fb2704ea8
+min_cost_idx = argmax(results[i][3] for i in 1:100)
+
+# ╔═╡ 1db8094e-d671-4471-8fac-68fa464a8221
+D_assign = results[min_cost_idx][2]
+
+# ╔═╡ 7ff1a038-24ca-4136-a7fd-c9d33f826089
+index_1 = findall(==(1), D_assign)
+
+# ╔═╡ 45639ee9-45af-48e9-8be3-223eec894f3f
+index_2 = findall(==(2), D_assign)
 
 # ╔═╡ d5edb3e2-ad7d-4499-bb49-2afa6b8426f9
 fill(1, 2)
@@ -247,62 +265,41 @@ md"""
 """
 
 # ╔═╡ 0b26340c-6857-43e5-b644-884ffee4e340
-Noise_path = joinpath(@__DIR__, "data", "Noise", "Noise_1.npy")
+# Noise_path = joinpath(@__DIR__, "data", "Noise", "Noise_1.npy")
 
 # ╔═╡ c600b4f4-4c74-4dc0-975a-1cbfb200d9f6
-Noise = npzread(Noise_path)
+# Noise = npzread(Noise_path)
 
 # ╔═╡ 8309751a-fbe3-4f9e-89da-bd0031430c7b
-N_clipped = Noise[1:273, :]
+# N_clipped = Noise[1:273, :]
 
 # ╔═╡ 3ad96e81-9fbb-41ec-8714-9b75678879a7
-B1_N_Clipped = vcat(D, N_clipped)
-
-# ╔═╡ 05e4b893-cc8e-49eb-b2e0-2df804d1f06e
-permutedims(B1_N_Clipped)
-
-# ╔═╡ a874456f-58a9-4d2e-9864-d80df5312d53
-results = batch_KSS(permutedims(B1_N_Clipped), fill(2, 2); niters=200, nruns=100)
-
-# ╔═╡ 66bcee83-71e6-4e24-bd43-21fa0a2d56f0
-unique(results[1][2])
-
-# ╔═╡ 9dbb856f-6746-4425-9bcf-8f6fb2704ea8
-min_cost_idx = argmax(results[i][3] for i in 1:100)
-
-# ╔═╡ 1db8094e-d671-4471-8fac-68fa464a8221
-D_assign = results[min_cost_idx][2]
-
-# ╔═╡ 7ff1a038-24ca-4136-a7fd-c9d33f826089
-index_1 = findall(==(1), D_assign)
-
-# ╔═╡ 45639ee9-45af-48e9-8be3-223eec894f3f
-index_2 = findall(==(2), D_assign)
+# B1_N_Clipped = vcat(D, N_clipped)
 
 # ╔═╡ 1114c67b-5513-40f6-b6c3-ccc23fe3d8b0
-d_N_clipped_1 = B1_N_Clipped[index_1, :]
+# d_N_clipped_1 = B1_N_Clipped[index_1, :]
 
 # ╔═╡ 25d4ec36-e620-463c-857e-bb39a8927687
-d_N_clipped_2 = B1_N_Clipped[index_2, :]
+# d_N_clipped_2 = B1_N_Clipped[index_2, :]
 
 # ╔═╡ f66be983-d45f-4cf0-aeae-f475ede8f36e
-with_theme() do
-	fig = Figure(; size=(900, 700))
-	ax = Axis(fig[1, 1])
-	ax1 = Axis(fig[1, 2])
-	ax2 = Axis(fig[1, 3])
-	lines!(ax, vec(mean(d_N_clipped_1, dims=1)))
-	lines!(ax1, vec(mean(N_clipped, dims=1)))
-	lines!(ax2, vec(mean(d_N_clipped_2, dims=1)))
-	# lines!(ax1, vec(mean(d_N_clipped_2, dims=1)))
-	fig
-end
+# with_theme() do
+# 	fig = Figure(; size=(900, 700))
+# 	ax = Axis(fig[1, 1])
+# 	ax1 = Axis(fig[1, 2])
+# 	ax2 = Axis(fig[1, 3])
+# 	lines!(ax, vec(mean(d_N_clipped_1, dims=1)))
+# 	lines!(ax1, vec(mean(N_clipped, dims=1)))
+# 	lines!(ax2, vec(mean(d_N_clipped_2, dims=1)))
+# 	# lines!(ax1, vec(mean(d_N_clipped_2, dims=1)))
+# 	fig
+# end
 
 # ╔═╡ fc6df003-01ee-4b38-84ba-1e1895988940
 
 
 # ╔═╡ Cell order:
-# ╠═253941dc-a2db-11ef-3f8d-7bff3a38c73c
+# ╟─253941dc-a2db-11ef-3f8d-7bff3a38c73c
 # ╟─6a16b1ba-4922-4371-a1a6-400557cc40e7
 # ╠═05602255-cb32-4da9-9198-1c75528cf61d
 # ╟─65edf46e-a573-466d-90d9-d92929d66961
@@ -325,7 +322,6 @@ end
 # ╠═37e72dc4-853c-4239-b4ec-0868a1f45c9b
 # ╠═2210d3ea-4a73-48f3-ac6a-00178cf93eb0
 # ╠═a1367151-c6ae-4031-9b9f-c811fc521a7c
-# ╠═05e4b893-cc8e-49eb-b2e0-2df804d1f06e
 # ╠═7515a10d-58db-41a0-87f6-cbd1a25f5d7d
 # ╠═a874456f-58a9-4d2e-9864-d80df5312d53
 # ╠═66bcee83-71e6-4e24-bd43-21fa0a2d56f0
