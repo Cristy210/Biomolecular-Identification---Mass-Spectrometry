@@ -261,6 +261,9 @@ B1_Res_SC = SC_Results[241:513]
 # ╔═╡ 826161f6-d5a2-4f05-9bde-eff31eb0ab58
 C1_Res_SC = SC_Results[514:795]
 
+# ╔═╡ a361d03f-6691-4a97-8368-82144cac020d
+
+
 # ╔═╡ b6660c89-a96c-4540-bc3a-63157eb7f7b2
 D1_Res_SC = SC_Results[796:1676]
 
@@ -277,16 +280,52 @@ C_label_count_EKSS = [count(x -> (x==i), C1_Res_SC) / length(C1_Res_SC) * 100 fo
 D_label_count_EKSS = [count(x -> (x==i), D1_Res_SC) / length(D1_Res_SC) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 3253c492-fc96-4083-92b7-6b341526f331
+C_label_1 = findall(C1_Res_SC .==(1))
 
+# ╔═╡ 7a8e84ec-d33e-49f5-9a35-d6325b88aa2d
+C_label_3 = findall(C1_Res_SC .==(3))
+
+# ╔═╡ c043ce09-a518-4341-9ec8-dcfea8b728ef
+C_start_idx = 514
+
+# ╔═╡ e05244e2-662f-4149-b5c8-e0a8c24bcf35
+C_orig_idx = C_label_1 .+ (C_start_idx - 1)
+
+# ╔═╡ 2dcfee65-45bc-45cf-8975-0c39c3a771f0
+C3_orig_idx = C_label_3 .+ (C_start_idx - 1)
+
+# ╔═╡ 5e3521cb-ae02-4f9b-a921-1bb11e42eb6c
+C_1s = [D[:, idx] for idx in C_orig_idx]
+
+# ╔═╡ 1e74ef70-2c84-4db7-851e-ac1829be1bfd
+C_3s = [D[:, idx] for idx in C3_orig_idx]
+
+# ╔═╡ 151a7f51-a773-476f-a119-8b688c51f076
+C_l1 = hcat(C_1s...)
+
+# ╔═╡ ad437c06-a8f0-4304-b5ad-f67b522129af
+C_l3 = hcat(C_3s...)
 
 # ╔═╡ d95c604e-f7f1-4c57-a870-134fda8d907e
-
+md"""
+### Plotting the signals labeled as 1
+"""
 
 # ╔═╡ 7fb05ff7-c40e-431b-8064-ebc5d7bdbfe2
-
+with_theme() do
+	fig = Figure(; size=(800, 600))
+	ax = Axis(fig[1, 1])
+	lines!(ax, vec(mean(C_l1, dims=1)))
+	fig
+end	
 
 # ╔═╡ 2434fc83-648b-46df-a446-8c5e9409580b
-
+with_theme() do
+	fig = Figure(; size=(800, 600))
+	ax = Axis(fig[1, 1])
+	lines!(ax, vec(mean(C_l3, dims=1)))
+	fig
+end	
 
 # ╔═╡ 935ce798-3823-4644-8537-ec82e7f8fdc9
 min_idx_KSS = argmax(KSS_Clustering[i][3] for i in 1:100)
@@ -340,7 +379,7 @@ D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:4]
 # ╠═b1c55a46-b277-4835-aadc-772a2bb0a88f
 # ╠═c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
 # ╠═fb1e68ce-2647-4c1e-93da-be2b77b0c9bf
-# ╟─f5534483-1c56-41c5-a309-8708435b6389
+# ╠═f5534483-1c56-41c5-a309-8708435b6389
 # ╠═c670fac6-a8be-4900-a35a-32fe8574afaa
 # ╟─b9e1254d-125a-4be8-a01c-1a5a78c76ba2
 # ╠═8642c0a4-9ef0-499d-b68e-176af46f6e2a
@@ -370,13 +409,22 @@ D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:4]
 # ╠═dc15cb8a-04e9-4ef8-809d-fdcadab3e842
 # ╠═96686b4e-ce37-4407-9979-d3094d543366
 # ╠═826161f6-d5a2-4f05-9bde-eff31eb0ab58
+# ╠═a361d03f-6691-4a97-8368-82144cac020d
 # ╠═b6660c89-a96c-4540-bc3a-63157eb7f7b2
 # ╠═bcb709ca-c1b2-40f3-9c9f-52d1db9a0048
 # ╠═317a2be3-68ba-4c1f-bb73-d1ffc83bc45f
 # ╠═5391d4d9-feee-41a5-aa60-a43e4b3f494c
 # ╠═51082690-d147-41f3-930a-1d4f0b60b7ba
 # ╠═3253c492-fc96-4083-92b7-6b341526f331
-# ╠═d95c604e-f7f1-4c57-a870-134fda8d907e
+# ╠═7a8e84ec-d33e-49f5-9a35-d6325b88aa2d
+# ╠═c043ce09-a518-4341-9ec8-dcfea8b728ef
+# ╠═e05244e2-662f-4149-b5c8-e0a8c24bcf35
+# ╠═2dcfee65-45bc-45cf-8975-0c39c3a771f0
+# ╠═5e3521cb-ae02-4f9b-a921-1bb11e42eb6c
+# ╠═1e74ef70-2c84-4db7-851e-ac1829be1bfd
+# ╠═151a7f51-a773-476f-a119-8b688c51f076
+# ╠═ad437c06-a8f0-4304-b5ad-f67b522129af
+# ╟─d95c604e-f7f1-4c57-a870-134fda8d907e
 # ╠═7fb05ff7-c40e-431b-8064-ebc5d7bdbfe2
 # ╠═2434fc83-648b-46df-a446-8c5e9409580b
 # ╠═935ce798-3823-4644-8537-ec82e7f8fdc9
