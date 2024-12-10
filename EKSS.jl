@@ -4,6 +4,18 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    #! format: off
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+    #! format: on
+end
+
 # ╔═╡ 4059337b-d0c5-4948-94b6-c47c229625da
 import Pkg; Pkg.activate(@__DIR__)
 
@@ -26,7 +38,7 @@ main {
 data_dir = joinpath(@__DIR__, "data", "K-Subspaces")
 
 # ╔═╡ 0ef5270a-6b13-44dc-a0ca-445cbac900e6
-file_names = ["A.npy", "B.npy", "C.npy", "D.npy"]
+file_names = ["A.npy", "B.npy", "C.npy", "D.npy", "Noise.npy"]
 
 # ╔═╡ 66771350-3cd8-4891-b77a-6f5ec7f328e0
 file_paths = [joinpath(data_dir, file_name) for file_name in file_names]
@@ -43,19 +55,10 @@ md"""
 D = hcat(Data...)
 
 # ╔═╡ 1a36bc2e-8f5b-4ba6-aecb-1f35955827b9
-positive_values = [row[row .> 0] for row in eachcol(D)]
+# positive_values = [row[row .> 0] for row in eachcol(D)]
 
 # ╔═╡ f86a0699-396a-4f60-b940-d6af17526b68
 D_pos = abs.(D .* (D .> 0))
-
-# ╔═╡ 37b95200-f8bf-435a-ad5c-9be3cd0057a6
-
-
-# ╔═╡ 46498468-0874-4882-a066-84fd7ad50604
-
-
-# ╔═╡ b8577d16-894f-4b6f-908a-d86a0937311a
-
 
 # ╔═╡ 8f31b045-c9c1-44c7-96c1-3433c2188206
 md"""
@@ -136,7 +139,7 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	D, N = size(X)
 	runs = Vector{Tuple{Vector{Matrix{Float64}}, Vector{Int}, Float64}}(undef, nruns)
 	@progress for idx in 1:nruns
-		U, c = cachet(joinpath(CACHEDIR, "Noiseless", "run-$idx.bson")) do
+		U, c = cachet(joinpath(CACHEDIR, "run-$idx.bson")) do
 			Random.seed!(idx)
 			KSS(X, d; niters=niters)
 		end
@@ -156,7 +159,7 @@ function batch_KSS(X, d; niters=100, nruns=10)
 end
 
 # ╔═╡ 0ab76807-7edd-4585-a225-61ee3e439482
-KSS_Clustering = batch_KSS(D, fill(2, 4); niters=200, nruns=100)
+KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=200)
 
 # ╔═╡ 4fd0a2f9-93b7-4709-afb7-90e6ef61c889
 KSS_Clustering[1]
@@ -186,6 +189,19 @@ A = begin
 	Aff ./ 100
 end
 
+# ╔═╡ 24bac54f-8d68-4e6b-87f1-4b99e501b34c
+@bind top_entries PlutoUI.Slider(10:50:2000; show_value=true)
+
+# ╔═╡ 7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
+begin
+	A_bar = zeros(size(A))
+	sorted_indices = [sortperm(A[:, i], rev=true)[1:top_entries] for i in 1:size(A, 1)]
+	[A_bar[i, 1:top_entries] .= [A[i, val] for (idx, val) in enumerate(sorted_indices[i])] for i in 1:size(A, 1)]
+end
+
+# ╔═╡ c7e25010-014f-4e40-afa6-5a6a758c486e
+A_bar
+
 # ╔═╡ 8f133591-8f5e-4bb0-bc44-f06419da5c98
 S = exp.((-2 .* acos.(clamp.(A, -1, 1))))
 
@@ -199,7 +215,7 @@ D_sqrinv = sqrt(inv(diag_mat))
 L_sym = Symmetric(I - (D_sqrinv * S * D_sqrinv))
 
 # ╔═╡ 8835255a-4fdc-4800-af50-210c5525ba0b
-n_clusters = 4
+n_clusters = 5
 
 # ╔═╡ fd9846a6-f2bd-4435-b63e-cbd5bd41f92c
 decomp, history = partialschur(L_sym; nev=n_clusters, which=:SR)
@@ -248,7 +264,7 @@ C_EKSS = EKSS_Results[1001:1500]
 D_EKSS = EKSS_Results[1501:2000]
 
 # ╔═╡ b9c19b70-b660-4ee9-b0e4-392d5200ecd8
-# N_EKSS = EKSS_Results[2001:2500]
+N_EKSS = EKSS_Results[2001:2500]
 
 # ╔═╡ 85ef6270-1570-4145-9698-4c49e79a9d28
 A_label_count_EKSS = [count(x -> (x==i), A_EKSS) / length(A_EKSS) * 100 for i in 1:n_clusters]
@@ -263,7 +279,7 @@ C_label_count_EKSS = [count(x -> (x==i), C_EKSS) / length(C_EKSS) * 100 for i in
 D_label_count_EKSS = [count(x -> (x==i), D_EKSS) / length(D_EKSS) * 100 for i in 1:n_clusters]
 
 # ╔═╡ c7cddb89-610d-4a5a-a96e-b757f2813ca5
-# N_label_count_EKSS = [count(x -> (x==i), N_EKSS) / length(N_EKSS) * 100 for i in 1:n_clusters]
+N_label_count_EKSS = [count(x -> (x==i), N_EKSS) / length(N_EKSS) * 100 for i in 1:n_clusters]
 
 # ╔═╡ Cell order:
 # ╠═1ca8b538-af39-11ef-2006-2778f9ccd5c2
@@ -277,9 +293,6 @@ D_label_count_EKSS = [count(x -> (x==i), D_EKSS) / length(D_EKSS) * 100 for i in
 # ╠═bba58c1c-8a6f-4041-b294-2a0af2954f96
 # ╠═1a36bc2e-8f5b-4ba6-aecb-1f35955827b9
 # ╠═f86a0699-396a-4f60-b940-d6af17526b68
-# ╠═37b95200-f8bf-435a-ad5c-9be3cd0057a6
-# ╠═46498468-0874-4882-a066-84fd7ad50604
-# ╠═b8577d16-894f-4b6f-908a-d86a0937311a
 # ╟─8f31b045-c9c1-44c7-96c1-3433c2188206
 # ╠═f6d0032b-00e9-4f2e-81b5-fd3646ea19cf
 # ╠═a268bde4-37b4-4729-b7f6-4ab339f1c2f4
@@ -293,6 +306,9 @@ D_label_count_EKSS = [count(x -> (x==i), D_EKSS) / length(D_EKSS) * 100 for i in
 # ╠═54977384-5eaf-4d7f-a072-a06e803aad2b
 # ╠═0a227ba5-3000-4f91-9153-0458861e3b78
 # ╠═59bce09f-3c01-40aa-b05e-55fcc6f3acc9
+# ╠═24bac54f-8d68-4e6b-87f1-4b99e501b34c
+# ╠═7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
+# ╠═c7e25010-014f-4e40-afa6-5a6a758c486e
 # ╠═8f133591-8f5e-4bb0-bc44-f06419da5c98
 # ╠═a70f1bc8-b61b-4886-b231-c68eca53e580
 # ╠═c39b8e19-cce5-481d-b844-d09e5e246fdb
