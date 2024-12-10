@@ -23,7 +23,7 @@ main {
 """
 
 # ╔═╡ cd5b3b47-96d5-4a56-9460-71893b5bd0bc
-data_dir = joinpath(@__DIR__, "data")
+data_dir = joinpath(@__DIR__, "new_data")
 
 # ╔═╡ 58f982b7-b8d2-41ca-aae5-198bf81759fb
 md"""
@@ -31,42 +31,160 @@ md"""
 """
 
 # ╔═╡ c776f85f-8bef-4e86-a556-496ff4cc8d65
-A_1_Path = joinpath(data_dir, "A", "A_1.npy")
+A_Path = joinpath(data_dir, "A.npy")
 
 # ╔═╡ 1bc03235-f0a3-4517-9be6-6329d8934ff4
-B_1_Path = joinpath(data_dir, "B", "B_1.npy")
+B_Path = joinpath(data_dir, "B.npy")
 
 # ╔═╡ 0d5f401e-2c74-4c0c-a89e-3117710a5700
-C_1_Path = joinpath(data_dir, "C", "C_1.npy")
+C_Path = joinpath(data_dir, "C.npy")
 
 # ╔═╡ 0434ce5d-ed1b-4746-a5a6-503fb04064f6
-D_1_Path = joinpath(data_dir, "D", "D_1.npy")
+D_Path = joinpath(data_dir, "D.npy")
 
 # ╔═╡ c68812a7-0b64-4ad0-87c1-069ceb0e2a6a
-Noise_path = joinpath(data_dir, "Noise", "Noise_1.npy")
+Noise_path = joinpath(data_dir, "Noise.npy")
 
 # ╔═╡ fe5de852-e15b-418c-8052-c4a9a21b25a1
-A_1 = permutedims(npzread(A_1_Path))
+A = permutedims(npzread(A_Path))
 
 # ╔═╡ 7d50960d-082a-4c07-80ae-c7c09dfd32e2
-B_1 = permutedims(npzread(B_1_Path))
+B = permutedims(npzread(B_Path))
 
 # ╔═╡ b1c55a46-b277-4835-aadc-772a2bb0a88f
-C_1 = permutedims(npzread(C_1_Path))
+C = permutedims(npzread(C_Path))
 
 # ╔═╡ c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
-D_1 = permutedims(npzread(D_1_Path))
+D = permutedims(npzread(D_Path))
 
 # ╔═╡ fb1e68ce-2647-4c1e-93da-be2b77b0c9bf
 N = permutedims(npzread(Noise_path))
+
+# ╔═╡ 97e6701d-c640-4db5-ae75-4f853da7e955
+mean(A,dims=2)
+
+# ╔═╡ a8b54e3d-ebbd-49ed-b2f4-571a154f8a94
+begin
+	
+	
+	# Initialize a figure
+	fig = Figure(resolution = (900, 400))
+	
+	# Create a 1x3 grid layout
+	ax1 = Axis(fig[1, 1], title = "Protein")
+	ax2 = Axis(fig[1, 2], title = "Bacteria")
+	ax3 = Axis(fig[1, 3], title = "Background")
+
+	ax4 = Axis(fig[3, 1], title = "Protein")
+	ax5 = Axis(fig[3, 2], title = "Bacteria")
+	ax6 = Axis(fig[3, 3], title = "Background")
+	vmin,vmax=0,3
+	# Plot heatmaps in each axis
+	hm1=heatmap!(ax1, A, colormap = :viridis, colorrange = (vmin, vmax))
+	hm2=heatmap!(ax2, C, colormap = :viridis, colorrange = (vmin, vmax))
+	hm3=heatmap!(ax3, N, colormap = :viridis, colorrange = (vmin, vmax))
+	lines!(ax4,mean(A,dims=2)[:,1])
+	lines!(ax5,mean(C,dims=2)[:,1])
+	lines!(ax6,mean(N,dims=2)[:,1])
+
+	# Add individual color bars for each heatmap
+	Colorbar(fig[2, 1], hm1, label = "Colorbar 1", vertical = false)
+	Colorbar(fig[2, 2], hm2, label = "Colorbar 2", vertical = false)
+	Colorbar(fig[2, 3], hm3, label = "Colorbar 3", vertical = false)
+	
+	# Adjust layout
+	#fig.layoutgap[] = 10  # Optional: Adjust gaps between plots for clarity
+	
+	# Display the figure
+	fig
+end
+
+# ╔═╡ bf61d59e-aabd-4dd1-95d9-7ea3df518d8c
+begin
+	# Compute the singular values
+	singular_values1 = svd(A').S
+	singular_values2 = svd(C').S
+	singular_values3 = svd(N').S
+	
+	# Compute the log of the singular values
+	log_singular_values1 = log10.(singular_values1)
+	log_singular_values2 = log10.(singular_values2)
+	log_singular_values3 = log10.(singular_values3)
+	
+	# Initialize a figure with size
+	fig2 = Figure(size = (900,400))
+	
+	# Create axes for each subplot
+	ax7 = Axis(fig2[1, 1], title = "Log Singular Values (Protein)", xlabel = "Index", ylabel = "Log10(Singular Value)")
+	ax8 = Axis(fig2[1, 2], title = "Log Singular Values (Bacteria)", xlabel = "Index", ylabel = "Log10(Singular Value)")
+	ax9 = Axis(fig2[1, 3], title = "Log Singular Values (Noise)", xlabel = "Index", ylabel = "Log10(Singular Value)")
+	
+	# Plot log singular values on each axis
+	scatter!(ax7, 1:length(log_singular_values1), log_singular_values1, color = :blue)
+	scatter!(ax8, 1:length(log_singular_values2), log_singular_values2, color = :red)
+	scatter!(ax9, 1:length(log_singular_values3), log_singular_values3, color = :green)
+	
+	# Display the figure
+	fig2
+	
+end
 
 # ╔═╡ f5534483-1c56-41c5-a309-8708435b6389
 md"""
 #### Data Matrix for all the the first .npy files in the agents A,B,C,D
 """
 
+# ╔═╡ 02c66efe-8ea3-4120-aaea-486879d475c8
+size(A')
+
+# ╔═╡ 59837f4e-48d1-4eb0-94ae-0f2ed996fe7f
+begin
+	
+	
+	# Initialize a figure
+	fig3 = Figure(resolution = (900, 400))
+
+
+	k=10
+	U_a,S_a,V_a = svd(A)
+	low_rank_A = U_a[:, 1:k]*Diagonal(S_a[1:k])*V_a[1:k, :] 
+
+	U_b,S_b,V_b = svd(B)
+	low_rank_B = U_b[:,1:k]*Diagonal(S_b[1:k])*V_b'[1:k,:]
+
+	U_n,S_n,V_n = svd(N)
+	low_rank_N = U_n[:,1:k]*Diagonal(S_n[1:k])*V_n[1:k,:]
+	
+	# Create a 1x3 grid layout
+	ax10 = Axis(fig3[1, 1], title = "Protein")
+	ax11 = Axis(fig3[1, 2], title = "Bacteria")
+	ax12 = Axis(fig3[1, 3], title = "Background")
+
+	# Plot heatmaps in each axis
+	hm4=heatmap!(ax10, low_rank_A, colormap = :viridis, colorrange = (vmin, vmax))
+	hm5=heatmap!(ax11, low_rank_B, colormap = :viridis, colorrange = (vmin, vmax))
+	hm6=heatmap!(ax12, low_rank_N, colormap = :viridis, colorrange = (vmin, vmax))
+	
+	# Add individual color bars for each heatmap
+	Colorbar(fig3[2, 1], hm4, label = "Colorbar 1", vertical = false)
+	Colorbar(fig3[2, 2], hm5, label = "Colorbar 2", vertical = false)
+	Colorbar(fig3[2, 3], hm6, label = "Colorbar 3", vertical = false)
+	
+	# Adjust layout
+	#fig.layoutgap[] = 10  # Optional: Adjust gaps between plots for clarity
+	
+	# Display the figure
+	fig3
+end
+
+# ╔═╡ 0e2b82a8-2083-4489-9758-376054e027ad
+svd(A)
+
 # ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
+# ╠═╡ disabled = true
+#=╠═╡
 D = hcat(A_1, B_1, C_1, D_1)
+  ╠═╡ =#
 
 # ╔═╡ b9e1254d-125a-4be8-a01c-1a5a78c76ba2
 md"""
@@ -130,6 +248,57 @@ function KSS(X, d; niters=100, Uinit=polar.(randn.(size(X, 1), collect(d))))
 	return U, c
 end
 
+# ╔═╡ 3458aa77-0a52-4763-828d-2e60ac1cb5fd
+function KSS_1iter(X, d; niters=100, Uinit=polar.(randn.(size(X, 1), collect(d))))
+	K = length(d)
+	D, N = size(X)
+	println("K: $K, D: $D, N: $N")
+	println("X: $(size(X))")
+	println("Uint: $(size(Uinit))")
+	# Initialize
+	U = deepcopy(Uinit)
+	c = [argmax(norm(U[k]' * view(X, :, i)) for k in 1:K) for i in 1:N]
+	c_prev = copy(c)
+	
+	# Update subspaces
+	
+	for k in 1:K
+		ilist = findall(==(k), c)
+		# println("Cluster $k, ilist size: ", length(ilist))
+		if isempty(ilist)
+			# println("Initializing $k subspace")
+			U[k] = polar(randn(D, d[k]))
+		else
+			A = view(X, :, ilist) * transpose(view(X, :, ilist))
+			decomp, history = partialschur(A; nev=d[k], which=:LR)
+			@show history
+			# U[k] = tsvd(view(X, :, ilist), d[k])[1]
+			U[k] = decomp.Q
+		end
+	end
+
+	# Update clusters
+	for i in 1:N
+		c[i] = argmax(norm(U[k]' * view(X, :, i)) for k in 1:K)
+	end
+
+	# Break if clusters did not change, update otherwise
+	#if c == c_prev
+	#	@info "Terminated early at iteration $t"
+	#	break
+	#end
+	#c_prev .= c
+
+	return U, c
+end
+
+# ╔═╡ 21d63098-a219-4401-96fc-e0061da2a1e2
+begin
+	temp = randn(500,2491)
+	
+	U1,S2,V2 = svd(temp')
+end
+
 # ╔═╡ 9093b52f-6653-4e5c-96e6-123a9902a5fb
 CACHEDIR = splitext(relpath(@__FILE__))[1]
 
@@ -169,6 +338,151 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	 return runs
 end
 
+# ╔═╡ 20c64e26-7945-4274-8d15-efe926e8102a
+begin
+	X = vcat(A', B', C',D',N')
+	print(size(X))
+	
+end
+
+# ╔═╡ 39f80efd-1846-4aef-8485-cc0102fa329e
+
+
+# ╔═╡ 4deecdfb-bf45-4647-b19d-fabe97141ad1
+begin
+	d = fill(2, 4)
+	U,output = KSS(X', d; niters=100, Uinit=polar.(randn.(size(X', 1), collect(d))))
+end
+
+# ╔═╡ ec16826c-86c1-444d-b834-7b2ed9d32d8a
+begin
+	#d = fill(2, 4)
+	polar_factor = polar.(randn.(size(X',1)))
+	println(size(polar_factor))
+	U_new,output_new = KSS_1iter(X', d; niters=100, Uinit=polar.(randn.(size(X', 1), collect(d))))
+end
+
+# ╔═╡ d7182a9d-acc7-48e8-93a4-5fe0c0b7526d
+reshape(output,(5,500))
+
+# ╔═╡ 5a5cf281-1c46-45df-8453-38affbae75b1
+output[1:500]
+
+# ╔═╡ 95480364-6e2f-498d-94a0-bce5814a50b9
+begin
+	inds_1 = findall(x -> x ==1, output)
+	
+	size(mean(X[inds_1,:],dims=1))
+end
+
+# ╔═╡ a5e0432c-1fb8-467c-b106-5ca37253d952
+begin
+	
+	# Initialize a figure with size
+	fig4 = Figure(size = (900,400))
+	
+	# Create axes for each subplot
+	ax13 = Axis(fig4[1, 1], title = "Log Singular Values (Protein)", xlabel = "Index", ylabel = "Log10(Singular Value)")
+	inds_2 = findall(x -> x ==4, output)
+	lines!(ax13,mean(X[inds_2,:],dims=1)[1,:])
+	#hm7=heatmap!(ax13, reshape(output,(5,500))', colormap = :viridis, colorrange = (vmin, vmax))
+	#Colorbar(fig4[2, 1], hm7, label = "Colorbar 1", vertical = false)
+
+	# Display the figure
+	fig4
+	
+end
+
+# ╔═╡ 387af8bf-1d02-4171-9eef-24ff4c888bb8
+findall(x -> x ==2, output)
+
+# ╔═╡ 1012905e-ec6d-45af-8c10-95fae6c9328f
+# K-subspaces clustering function
+function new_KSS(data, K; max_iter=100, tol=1e-6)
+    num_samples, sample_length = size(data)
+	println("K: $K, num_samples: $num_samples")
+    # Randomly initialize cluster assignments
+    clusters = rand(1:K, num_samples)
+    println("Clusters: $(size(clusters))")
+    # Initialize the subspaces (using SVD for each cluster)
+    subspaces = Dict()
+    for k in 1:K
+        cluster_data = data[clusters .== k, :]
+		println("Cluster data: $(size(cluster_data))")
+        if size(cluster_data, 1) > 1
+            U, _, _ = svd(cluster_data)
+			println("U: $(size(U))")
+            subspaces[k] = U[:, 1:5]  # Initialize subspaces with rank 5 (can be adjusted)
+			println("subspace dim: $(size(subspaces[k]))")
+        end
+    end
+    println(" ")
+    # Iterative optimization with progress tracking
+    prev_clusters = zeros(Int, num_samples)
+    @progress for iteration in 1:max_iter
+        # Step 1: Assign each sample to the nearest subspace
+        for i in 1:num_samples
+            min_dist = Inf
+            best_cluster = 1
+            for k in 1:K
+                # Compute the projection distance from the sample to the subspace
+				println("|| $(size(data[i, :]))  - $(size(subspaces[k])) * ($(size(subspaces[k]')) *$(size( data[i, :]))||)")
+				
+                #dist = norm(data[i, :] - subspaces[k] * (subspaces[k]' * data[i, :]))
+                projection = subspaces[k]' * data[i, :]   # Project sample onto subspace
+				println("projection: $(size(project))")
+                dist = norm(data[i, :] - subspaces[k] * projection)  # Compute the residual
+				if dist < min_dist
+                    min_dist = dist
+                    best_cluster = k
+                end
+            end
+            clusters[i] = best_cluster
+        end
+        
+        # Step 2: Update subspaces
+        for k in 1:K
+            cluster_data = data[clusters .== k, :]
+            if size(cluster_data, 1) > 1
+                U, _, _ = svd(cluster_data)
+                subspaces[k] = U[:, 1:5]  # Update subspaces with rank 5
+            end
+        end
+        
+        # Step 3: Check for convergence (no change in clusters)
+        if sum(clusters .!= prev_clusters) == 0
+            println("Converged at iteration $iteration")
+            break
+        end
+        prev_clusters = clusters
+        
+        # Check if the maximum number of iterations has been reached
+        if iteration == max_iter
+            println("Max iterations reached.")
+        end
+    end
+    
+    return clusters, subspaces
+end
+
+
+
+# ╔═╡ d3e4f046-a057-4f38-841b-7db448c7f557
+# Run K-subspaces algorithm
+begin
+	K = 5
+	clusters, subspaces = new_KSS(X, K)
+	
+	# Output the final clusters and subspaces
+	println("Final clusters:")
+	println(clusters)
+	
+	println("\nSubspaces:")
+	for (k, subspace) in subspaces
+	    println("Cluster $k: Subspace Basis (size = $(size(subspace)))")
+	end
+end
+
 # ╔═╡ 47ce0e35-573c-41e9-a7c9-226049379d0f
 KSS_Clustering = batch_KSS(D, fill(2, 4); niters=200, nruns=100)
 
@@ -191,6 +505,8 @@ cluster_labels[1][1]
 
 
 # ╔═╡ 58464366-c9c2-4a5a-b3cf-bbcec13721b9
+# ╠═╡ disabled = true
+#=╠═╡
 A = begin
 	A = zeros(Float64, N_pixels, N_pixels)
 	for labels in cluster_labels
@@ -202,6 +518,19 @@ A = begin
 	end
 	A ./ 100
 end
+  ╠═╡ =#
+
+# ╔═╡ 28c71d8d-ee1d-4065-ad54-52a2faeca061
+with_theme() do
+	fig= Figure(; size=(800, 600))
+	ax = Axis(fig[1, 1], aspect=DataAspect(), yreversed=true)
+	hm = heatmap!(ax, A, colormap= :viridis)
+	Colorbar(fig[1, 2], hm)
+	fig
+end
+
+# ╔═╡ d4f6c0be-7f9e-4214-b7b4-577d790047ba
+
 
 # ╔═╡ 8f51c4cb-8fc9-4f2b-a621-fcd7d89a7244
 S = exp.((-2 .* acos.(clamp.(A, -1, 1))))
@@ -340,15 +669,34 @@ D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:4]
 # ╠═b1c55a46-b277-4835-aadc-772a2bb0a88f
 # ╠═c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
 # ╠═fb1e68ce-2647-4c1e-93da-be2b77b0c9bf
+# ╠═97e6701d-c640-4db5-ae75-4f853da7e955
+# ╠═a8b54e3d-ebbd-49ed-b2f4-571a154f8a94
+# ╠═bf61d59e-aabd-4dd1-95d9-7ea3df518d8c
 # ╟─f5534483-1c56-41c5-a309-8708435b6389
+# ╠═02c66efe-8ea3-4120-aaea-486879d475c8
+# ╠═59837f4e-48d1-4eb0-94ae-0f2ed996fe7f
+# ╠═0e2b82a8-2083-4489-9758-376054e027ad
 # ╠═c670fac6-a8be-4900-a35a-32fe8574afaa
 # ╟─b9e1254d-125a-4be8-a01c-1a5a78c76ba2
 # ╠═8642c0a4-9ef0-499d-b68e-176af46f6e2a
 # ╠═3befa9a5-b34b-4da3-98d4-0976e3f7ca63
+# ╠═3458aa77-0a52-4763-828d-2e60ac1cb5fd
+# ╠═ec16826c-86c1-444d-b834-7b2ed9d32d8a
+# ╠═21d63098-a219-4401-96fc-e0061da2a1e2
 # ╠═9093b52f-6653-4e5c-96e6-123a9902a5fb
 # ╠═017f233c-25a7-4c4b-858f-577e3654304d
 # ╠═cb7b25f2-273d-4a68-ab49-f79279462b05
 # ╠═f4acff73-86ce-4561-96c4-bd71e3242582
+# ╠═20c64e26-7945-4274-8d15-efe926e8102a
+# ╠═39f80efd-1846-4aef-8485-cc0102fa329e
+# ╠═4deecdfb-bf45-4647-b19d-fabe97141ad1
+# ╠═d7182a9d-acc7-48e8-93a4-5fe0c0b7526d
+# ╠═5a5cf281-1c46-45df-8453-38affbae75b1
+# ╠═95480364-6e2f-498d-94a0-bce5814a50b9
+# ╠═a5e0432c-1fb8-467c-b106-5ca37253d952
+# ╠═387af8bf-1d02-4171-9eef-24ff4c888bb8
+# ╠═1012905e-ec6d-45af-8c10-95fae6c9328f
+# ╠═d3e4f046-a057-4f38-841b-7db448c7f557
 # ╠═47ce0e35-573c-41e9-a7c9-226049379d0f
 # ╠═eb04b83e-5e40-4531-8f43-b3e9945fb762
 # ╠═92f8441d-1426-4d23-841d-cf1e665b4bd5
@@ -357,6 +705,8 @@ D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:4]
 # ╠═d68dd25a-79bd-46bc-90be-02e404d29265
 # ╠═72478454-f83b-4e98-bc10-ff0444c1d770
 # ╠═58464366-c9c2-4a5a-b3cf-bbcec13721b9
+# ╠═28c71d8d-ee1d-4065-ad54-52a2faeca061
+# ╠═d4f6c0be-7f9e-4214-b7b4-577d790047ba
 # ╠═8f51c4cb-8fc9-4f2b-a621-fcd7d89a7244
 # ╠═f679d461-ca23-462b-ac74-4365d4f2d2b4
 # ╠═b6874048-8668-4927-b6aa-1e16a1063c75
