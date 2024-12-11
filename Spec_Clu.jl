@@ -22,48 +22,39 @@ main {
 }
 """
 
-# ╔═╡ 500d545d-63d8-4781-82d1-c76134ba5d7b
-data_dir = joinpath(@__DIR__, "data")
-
 # ╔═╡ 9e3318f6-ae50-4f2c-a9e1-c713e474ac2a
 md"""
 #### Reading all the the first .npy files in the agents A,B,C,D
 """
 
-# ╔═╡ b9a1ea68-bab2-4dea-a5da-9adf297eb3d4
-A_1_Path = joinpath(data_dir, "A", "A_1.npy")
+# ╔═╡ 500d545d-63d8-4781-82d1-c76134ba5d7b
+data_dir = joinpath(@__DIR__, "data", "K-Subspaces")
 
-# ╔═╡ 4ff135ab-4766-4171-966f-9d1ec0a9fd85
-B_1_Path = joinpath(data_dir, "B", "B_1.npy")
+# ╔═╡ 622e8247-f9fb-4fec-84ff-5f7cd0ebf7dc
+file_names = ["A.npy", "B.npy", "C.npy", "D.npy", "Noise.npy"]
 
-# ╔═╡ d47e4774-0643-42bf-8f9e-90623734f928
-C_1_Path = joinpath(data_dir, "C", "C_1.npy")
-
-# ╔═╡ 82582279-cd77-4421-babb-00ec2878556e
-D_1_Path = joinpath(data_dir, "D", "D_1.npy")
-
-# ╔═╡ 8d492fd8-db84-48d4-b008-ec60aa9a4589
-A_1 = permutedims(npzread(A_1_Path))
-
-# ╔═╡ 01a6a4d7-6cfe-4f02-94f3-d97fe40fa513
-B_1 = permutedims(npzread(B_1_Path))
-
-# ╔═╡ 588cab78-bea3-4786-8061-eccfd0467fbf
-C_1 = permutedims(npzread(C_1_Path))
-
-# ╔═╡ 13928f14-d86f-4b02-b133-08b1f4f8d7c8
-D_1 = permutedims(npzread(D_1_Path))
+# ╔═╡ e0ff4d3a-3798-4031-8599-0493489b2ca2
+file_paths = [joinpath(data_dir, file_name) for file_name in file_names]
 
 # ╔═╡ d60a1be3-6294-4458-bf7c-0f62587c9f5a
 md"""
 #### Data Matrix for all the the first .npy files in the agents A,B,C,D
 """
 
+# ╔═╡ 1e070f6b-9dad-488e-8ac8-51bbce4bf56f
+Data = [permutedims(npzread(path)) for path in file_paths]
+
+# ╔═╡ 2d51d180-a180-46a9-b86f-a8edab5ce21c
+
+
 # ╔═╡ b86ec7f7-38f2-4c03-a2e2-4da88efcc306
-D = hcat(A_1, B_1, C_1, D_1)
+D_abs = hcat(Data...)
+
+# ╔═╡ f4548614-0299-4202-83cc-2860cf5ad337
+D = abs.(D_abs.* (D_abs .> 0))
 
 # ╔═╡ d28bfcc8-76d9-49ed-87fa-44a4aa4e4cdf
-CACHEDIR = splitext(relpath(@__FILE__))[1]
+# CACHEDIR = splitext(relpath(@__FILE__))[1]
 
 # ╔═╡ 414bc403-ac65-436c-92a6-bb6186aea596
 col_norms = [norm(D[:, i]) for i in 1:size(D, 2)]
@@ -89,11 +80,17 @@ D_sqrinv = sqrt(inv(diag_mat))
 # ╔═╡ 8ff868a6-2529-43b1-bfa5-843718e34d1d
 L_sym = Symmetric(I - (D_sqrinv * S * D_sqrinv))
 
+# ╔═╡ f5b7437f-8b6b-421b-938e-ca753ff01e66
+n_clusters = 5
+
 # ╔═╡ 86e0e245-ec92-4c04-8d83-0e494157bac5
-decomp, history = partialschur(L_sym; nev=4, which=:SR)
+decomp, history = partialschur(L_sym; nev=n_clusters, which=:SR)
 
 # ╔═╡ f2be6e06-bed0-465c-94e8-017bdc288fb6
 V = mapslices(normalize, decomp.Q; dims=2)
+
+# ╔═╡ de96d4d1-5d38-4273-8233-88332c624ac2
+
 
 # ╔═╡ 0d71ecff-86d4-4b4c-8250-4ff47c6dbb34
 function batchkmeans(X, k, args...; nruns=100, kwargs...)
@@ -118,34 +115,40 @@ function batchkmeans(X, k, args...; nruns=100, kwargs...)
 end
 
 # ╔═╡ 80cc2bb5-d43d-41c1-94ed-9ae9eeeadc48
-spec_clusterings = batchkmeans(permutedims(V), 4; maxiter=1000)
+spec_clusterings = batchkmeans(permutedims(V), n_clusters; maxiter=1000)
 
 # ╔═╡ 31604328-6a70-4d6a-8d0d-dbc373365484
 SC_Results = spec_clusterings[1].assignments
 
 # ╔═╡ 053ab09c-bc43-4c44-ab17-d876d895c2fa
-A1_Res = SC_Results[1:240]
+A1_Res = SC_Results[1:500]
 
 # ╔═╡ 00ec7477-e1ca-4484-b317-e0fdfe98c1bd
-B1_Res = SC_Results[241:513]
+B1_Res = SC_Results[501:1000]
 
 # ╔═╡ f78c1cd3-12ab-4665-b029-f596d9b383d1
-C1_Res = SC_Results[514:795]
+C1_Res = SC_Results[1001:1500]
 
 # ╔═╡ 08c39ca5-8f6a-44e3-acf5-61caf0c8a6be
-D1_Res = SC_Results[796:1676]
+D1_Res = SC_Results[1501:2000]
+
+# ╔═╡ bd3c7aae-0541-4864-9c6e-b889963c0b5c
+N_Res = SC_Results[2001:2500]
 
 # ╔═╡ 15c4a97c-22c0-439f-920b-39373002cded
-A_label_count = [count(x -> (x==i), A1_Res) / length(A1_Res) * 100 for i in 1:4]
+A_label_count = [count(x -> (x==i), A1_Res) / length(A1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 52836235-973e-4c52-8571-c4aeb83a93ca
-B_label_count = [count(x -> (x==i), B1_Res) / length(B1_Res) * 100 for i in 1:4]
+B_label_count = [count(x -> (x==i), B1_Res) / length(B1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 58b584e3-3117-45ea-b7f4-8bddbf8ad9ca
-C_label_count = [count(x -> (x==i), C1_Res) / length(C1_Res) * 100 for i in 1:4]
+C_label_count = [count(x -> (x==i), C1_Res) / length(C1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 65e6dbf3-3914-492a-a755-6884ed9c05a6
-D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:4]
+D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:n_clusters]
+
+# ╔═╡ 8ef5a0c2-3f6d-44ac-bedb-0ed1eea3a912
+N_label_count = [count(x -> (x==i), N_Res) / length(N_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 45496921-7e0a-47e2-9cad-7eb631fba2ba
 md"""
@@ -226,18 +229,15 @@ end
 # ╟─a5400cdb-5e6b-4ab7-856e-10520556773b
 # ╠═7c568c74-1c0f-4ab5-aaa6-e1271ea1db4a
 # ╠═3564c39a-1def-4613-bc81-87698bc1374a
-# ╠═500d545d-63d8-4781-82d1-c76134ba5d7b
 # ╟─9e3318f6-ae50-4f2c-a9e1-c713e474ac2a
-# ╠═b9a1ea68-bab2-4dea-a5da-9adf297eb3d4
-# ╠═4ff135ab-4766-4171-966f-9d1ec0a9fd85
-# ╠═d47e4774-0643-42bf-8f9e-90623734f928
-# ╠═82582279-cd77-4421-babb-00ec2878556e
-# ╠═8d492fd8-db84-48d4-b008-ec60aa9a4589
-# ╠═01a6a4d7-6cfe-4f02-94f3-d97fe40fa513
-# ╠═588cab78-bea3-4786-8061-eccfd0467fbf
-# ╠═13928f14-d86f-4b02-b133-08b1f4f8d7c8
+# ╠═500d545d-63d8-4781-82d1-c76134ba5d7b
+# ╠═622e8247-f9fb-4fec-84ff-5f7cd0ebf7dc
+# ╠═e0ff4d3a-3798-4031-8599-0493489b2ca2
 # ╟─d60a1be3-6294-4458-bf7c-0f62587c9f5a
+# ╠═1e070f6b-9dad-488e-8ac8-51bbce4bf56f
+# ╠═2d51d180-a180-46a9-b86f-a8edab5ce21c
 # ╠═b86ec7f7-38f2-4c03-a2e2-4da88efcc306
+# ╠═f4548614-0299-4202-83cc-2860cf5ad337
 # ╠═d28bfcc8-76d9-49ed-87fa-44a4aa4e4cdf
 # ╠═414bc403-ac65-436c-92a6-bb6186aea596
 # ╠═f06fe3bb-5252-4faf-8844-180bb14d9ad8
@@ -247,8 +247,10 @@ end
 # ╠═434d7a9c-60aa-4714-ab7e-8737b6104b04
 # ╠═41f76e88-e6b6-4102-bce5-0ef8a1020781
 # ╠═8ff868a6-2529-43b1-bfa5-843718e34d1d
+# ╠═f5b7437f-8b6b-421b-938e-ca753ff01e66
 # ╠═86e0e245-ec92-4c04-8d83-0e494157bac5
 # ╠═f2be6e06-bed0-465c-94e8-017bdc288fb6
+# ╠═de96d4d1-5d38-4273-8233-88332c624ac2
 # ╠═0d71ecff-86d4-4b4c-8250-4ff47c6dbb34
 # ╠═80cc2bb5-d43d-41c1-94ed-9ae9eeeadc48
 # ╠═31604328-6a70-4d6a-8d0d-dbc373365484
@@ -256,10 +258,12 @@ end
 # ╠═00ec7477-e1ca-4484-b317-e0fdfe98c1bd
 # ╠═f78c1cd3-12ab-4665-b029-f596d9b383d1
 # ╠═08c39ca5-8f6a-44e3-acf5-61caf0c8a6be
+# ╠═bd3c7aae-0541-4864-9c6e-b889963c0b5c
 # ╠═15c4a97c-22c0-439f-920b-39373002cded
 # ╠═52836235-973e-4c52-8571-c4aeb83a93ca
 # ╠═58b584e3-3117-45ea-b7f4-8bddbf8ad9ca
 # ╠═65e6dbf3-3914-492a-a755-6884ed9c05a6
+# ╠═8ef5a0c2-3f6d-44ac-bedb-0ed1eea3a912
 # ╟─45496921-7e0a-47e2-9cad-7eb631fba2ba
 # ╠═dba08ba0-efb4-461b-80e5-9da2b2afc8f8
 # ╠═1aa21c70-6180-4b2a-b8a6-8e8c20e01cec
