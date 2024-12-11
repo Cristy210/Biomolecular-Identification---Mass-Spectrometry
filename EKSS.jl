@@ -4,18 +4,6 @@
 using Markdown
 using InteractiveUtils
 
-# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
-macro bind(def, element)
-    #! format: off
-    quote
-        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
-        local el = $(esc(element))
-        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
-        el
-    end
-    #! format: on
-end
-
 # ╔═╡ 4059337b-d0c5-4948-94b6-c47c229625da
 import Pkg; Pkg.activate(@__DIR__)
 
@@ -35,7 +23,7 @@ main {
 """
 
 # ╔═╡ 46afcea3-a754-4731-81f9-e2a4c880d61d
-data_dir = joinpath(@__DIR__, "data", "K-Subspaces")
+data_dir = joinpath(@__DIR__, "data", "new_data")
 
 # ╔═╡ 0ef5270a-6b13-44dc-a0ca-445cbac900e6
 file_names = ["A.npy", "B.npy", "C.npy", "D.npy", "Noise.npy"]
@@ -159,7 +147,7 @@ function batch_KSS(X, d; niters=100, nruns=10)
 end
 
 # ╔═╡ 0ab76807-7edd-4585-a225-61ee3e439482
-KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=200)
+KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=271)
 
 # ╔═╡ 4fd0a2f9-93b7-4709-afb7-90e6ef61c889
 KSS_Clustering[1]
@@ -188,9 +176,6 @@ A = begin
 	end
 	Aff ./ 100
 end
-
-# ╔═╡ 24bac54f-8d68-4e6b-87f1-4b99e501b34c
-@bind top_entries PlutoUI.Slider(10:50:2000; show_value=true)
 
 # ╔═╡ 7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
 begin
@@ -306,7 +291,6 @@ N_label_count_EKSS = [count(x -> (x==i), N_EKSS) / length(N_EKSS) * 100 for i in
 # ╠═54977384-5eaf-4d7f-a072-a06e803aad2b
 # ╠═0a227ba5-3000-4f91-9153-0458861e3b78
 # ╠═59bce09f-3c01-40aa-b05e-55fcc6f3acc9
-# ╠═24bac54f-8d68-4e6b-87f1-4b99e501b34c
 # ╠═7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
 # ╠═c7e25010-014f-4e40-afa6-5a6a758c486e
 # ╠═8f133591-8f5e-4bb0-bc44-f06419da5c98
