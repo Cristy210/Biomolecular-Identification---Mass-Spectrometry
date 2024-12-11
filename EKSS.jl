@@ -165,7 +165,7 @@ end
 fill(2, 5)
 
 # ╔═╡ 0ab76807-7edd-4585-a225-61ee3e439482
-KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=100)
+KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=200)
 
 # ╔═╡ 4fd0a2f9-93b7-4709-afb7-90e6ef61c889
 KSS_Clustering[1]
