@@ -233,7 +233,7 @@ index_2 = findall(==(2), D_assign)
 fill(1, 2)
 
 # ╔═╡ 869f0d2f-6afb-4ce2-997d-814e88908f5c
-# D_1 = D[index_1, :]
+D_1 = D[index_1, :]
 
 # ╔═╡ 276d3181-625a-49ab-8053-573f89f80a30
 # D_2 = D[index_2, :]
