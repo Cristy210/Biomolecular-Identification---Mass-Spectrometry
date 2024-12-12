@@ -23,7 +23,7 @@ main {
 """
 
 # ╔═╡ 46afcea3-a754-4731-81f9-e2a4c880d61d
-data_dir = joinpath(@__DIR__, "data", "new_data")
+data_dir = joinpath(@__DIR__, "data", "K-Subspaces")
 
 # ╔═╡ 0ef5270a-6b13-44dc-a0ca-445cbac900e6
 file_names = ["A.npy", "B.npy", "C.npy", "D.npy", "Noise.npy"]
@@ -153,15 +153,9 @@ end
 fill(2, 5)
 
 # ╔═╡ 0ab76807-7edd-4585-a225-61ee3e439482
-<<<<<<< HEAD
-KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=200)
-=======
-<<<<<<< HEAD
-KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=271)
-=======
+
+# KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=200)
 KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=100)
->>>>>>> 0c6498ab03985bf2489b0c9fffc63968b055ab75
->>>>>>> a38ed6bb7d9759aadb6213b70cc509969599cc1d
 
 # ╔═╡ 4fd0a2f9-93b7-4709-afb7-90e6ef61c889
 KSS_Clustering[1]
@@ -190,6 +184,9 @@ A = begin
 	end
 	Aff ./ 100
 end
+
+# ╔═╡ 09805169-5fd0-4dd6-87ee-3ab66c499296
+top_entries = 100
 
 # ╔═╡ 7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
 begin
@@ -307,6 +304,7 @@ N_label_count_EKSS = [count(x -> (x==i), N_EKSS) / length(N_EKSS) * 100 for i in
 # ╠═54977384-5eaf-4d7f-a072-a06e803aad2b
 # ╠═0a227ba5-3000-4f91-9153-0458861e3b78
 # ╠═59bce09f-3c01-40aa-b05e-55fcc6f3acc9
+# ╠═09805169-5fd0-4dd6-87ee-3ab66c499296
 # ╠═7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
 # ╠═c7e25010-014f-4e40-afa6-5a6a758c486e
 # ╠═8f133591-8f5e-4bb0-bc44-f06419da5c98
