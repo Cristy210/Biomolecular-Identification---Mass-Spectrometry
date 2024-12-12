@@ -71,22 +71,7 @@ md"""
 D_org = hcat(Data...)
 
 # ╔═╡ 1b443b23-d3b5-48da-97ba-44f4ad498522
-D_abs = abs.(D_org.* (D_org .> 0))
-
-# ╔═╡ e03472ea-e75e-49f7-a1c8-9fc5f550f9a0
-_, ∑, V_t= svd(D_abs)
-
-# ╔═╡ c1d4711c-685c-4dec-bae0-5d3f04f45034
-sigma = Diagonal(∑)
-
-# ╔═╡ b8f4b164-7425-4b5b-84b1-9c9d7c599116
-# k_components = 20
-
-# ╔═╡ d485e6b7-6b6c-47cd-9622-6b107297af50
-@bind k_components PlutoUI.Slider(10:10:1000; show_value=true)
-
-# ╔═╡ 6125a633-5eae-470c-9fe9-3ec5a549ab0e
-D = sigma[1:k_components, 1:k_components] * V_t[1:k_components, :]
+D = abs.(D_org.* (D_org .> 0))
 
 # ╔═╡ d0c5ecaa-2f81-40af-8a36-9ce9732d1385
 # CACHEDIR = splitext(relpath(@__FILE__))[1]
@@ -153,34 +138,54 @@ function batchkmeans(X, k, args...; nruns=100, kwargs...)
 end
 
 # ╔═╡ d1e78fd8-3403-40b2-9acf-43204caf5bf1
+#=╠═╡
 spec_clusterings = batchkmeans(permutedims(V), n_clusters; maxiter=1000)
+  ╠═╡ =#
 
 # ╔═╡ 1192b8a0-7d4f-45a2-a506-70846ae0d206
+#=╠═╡
 SC_Results = spec_clusterings[1].assignments
+  ╠═╡ =#
 
 # ╔═╡ 73139f21-4785-4948-97d1-4d4db9272b2f
+#=╠═╡
 A1_Res = SC_Results[1:500]
+  ╠═╡ =#
 
 # ╔═╡ 05984c1c-2c35-4500-b99f-0ab627809198
+#=╠═╡
 B1_Res = SC_Results[501:1000]
+  ╠═╡ =#
 
 # ╔═╡ c51136ce-9120-404c-8bc3-89ea250d1e62
+#=╠═╡
 C1_Res = SC_Results[1001:1500]
+  ╠═╡ =#
 
 # ╔═╡ b89a1c6f-383d-4715-bd75-e6ae4da27623
+#=╠═╡
 D1_Res = SC_Results[1501:2000]
+  ╠═╡ =#
 
 # ╔═╡ cb92b31d-f44d-4c6f-b181-4fa1cbdd1c52
+#=╠═╡
 A_label_count = [count(x -> (x==i), A1_Res) / length(A1_Res) * 100 for i in 1:n_clusters]
+  ╠═╡ =#
 
 # ╔═╡ 3990a38b-c85a-4115-9c47-6cb39a29b6e3
+#=╠═╡
 B_label_count = [count(x -> (x==i), B1_Res) / length(B1_Res) * 100 for i in 1:n_clusters]
+  ╠═╡ =#
 
 # ╔═╡ f041f163-5802-44b0-b417-f2f16575dfe0
+#=╠═╡
 C_label_count = [count(x -> (x==i), C1_Res) / length(C1_Res) * 100 for i in 1:n_clusters]
+  ╠═╡ =#
 
 # ╔═╡ 84a51ff3-72ff-4636-ba57-14e7a6bb5958
+#=╠═╡
 D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:n_clusters]
+  ╠═╡ =#
 
 # ╔═╡ e17c9163-7b1d-4672-9846-b526c9f24343
 md"""
@@ -281,10 +286,10 @@ function batch_KSS(X, d; niters=100, nruns=10)
 end
 
 # ╔═╡ dedbc869-46b5-4bbe-9910-e2359e98fb52
-KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
+# KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
 
 # ╔═╡ Cell order:
-# ╠═4b89c903-e5d9-4066-b5aa-e6ba8712e056
+# ╟─4b89c903-e5d9-4066-b5aa-e6ba8712e056
 # ╟─57783977-c0f5-43b0-b43c-01d51e5a37cf
 # ╠═1b187d2e-958f-42a5-a266-6f0dd1847a6b
 # ╠═323391e7-2911-455e-813c-4f1b09aa02f6
@@ -298,11 +303,6 @@ KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
 # ╟─6acf8b8d-77dc-4da9-9fa1-32d31f2d17be
 # ╠═07cc7e63-5e5d-4937-b8e9-9f730d79a180
 # ╠═1b443b23-d3b5-48da-97ba-44f4ad498522
-# ╠═e03472ea-e75e-49f7-a1c8-9fc5f550f9a0
-# ╠═c1d4711c-685c-4dec-bae0-5d3f04f45034
-# ╠═b8f4b164-7425-4b5b-84b1-9c9d7c599116
-# ╠═d485e6b7-6b6c-47cd-9622-6b107297af50
-# ╠═6125a633-5eae-470c-9fe9-3ec5a549ab0e
 # ╠═d0c5ecaa-2f81-40af-8a36-9ce9732d1385
 # ╟─f83c400c-7c6a-40ec-9784-a690506367de
 # ╠═7efcff6a-630f-49aa-bfb9-64c242a5a526
