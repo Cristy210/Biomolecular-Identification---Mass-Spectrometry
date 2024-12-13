@@ -120,6 +120,52 @@ with_theme() do
 	fig
 end
 
+# ╔═╡ 84e32a18-65c3-4261-a3f7-a41b1894b639
+with_theme() do
+	fig = Figure(; size = (950,400))
+
+	supertitle = Label(fig[0, 1:4], "Log Singular Values", fontsize=20, halign=:center, valign=:top, )
+
+	#Setting up the Gridlayouts one for each Agent
+	grid1 = GridLayout(fig[1, 1]; nrow=1, ncol=1)
+    grid2 = GridLayout(fig[1, 2]; nrow=1, ncol=1)
+	grid3 = GridLayout(fig[1, 3]; nrow=1, ncol=1)
+	grid4 = GridLayout(fig[1, 4]; nrow=1, ncol=1)
+	
+	# Compute the singular values
+	singular_values1 = svd(Data[1]').S
+	singular_values2 = svd(Data[2]').S
+	singular_values3 = svd(Data[3]').S
+	singular_values4 = svd(Data[4]').S
+	
+	# Compute the log of the singular values
+	log_singular_values1 = log10.(singular_values1)
+	log_singular_values2 = log10.(singular_values2)
+	log_singular_values3 = log10.(singular_values3)
+	log_singular_values3 = log10.(singular_values4)
+	
+	# Initialize a figure with size
+	
+	
+	# Create axes for each subplot
+	ax1 = Axis(grid1[1, 1], title = "Protein A", xlabel = "Index", ylabel = "Log10(Singular Value)")
+	ax2 = Axis(grid2[1, 1], title = "Protein B", xlabel = "Index")
+	ax3 = Axis(grid3[1, 1], title = "Bacteria C", xlabel = "Index")
+	ax4 = Axis(grid4[1, 1], title = "Bacteria D", xlabel = "Index")
+	
+	# Plot log singular values on each axis
+	scatter!(ax1, 1:length(log_singular_values1), log_singular_values1, color = :blue)
+	scatter!(ax2, 1:length(log_singular_values2), log_singular_values2, color = :red)
+	scatter!(ax3, 1:length(log_singular_values3), log_singular_values3, color = :green)
+	scatter!(ax4, 1:length(log_singular_values3), log_singular_values3, color = :black)
+	
+	# Display the figure
+	fig
+end
+
+# ╔═╡ f0ad6c2e-1e99-43cc-a40f-952bdcad5d79
+
+
 # ╔═╡ Cell order:
 # ╟─11d7e2e7-e7cb-4236-baee-c66a8655eb74
 # ╟─d4178dfd-1f6b-4f56-b82a-79139eacd853
@@ -137,3 +183,5 @@ end
 # ╠═3684150b-92d5-4116-ba85-467923db0277
 # ╠═6c289b70-e518-4561-9536-8115425e598a
 # ╠═242c152e-96f0-48b0-ab0a-f56ef70b7691
+# ╠═84e32a18-65c3-4261-a3f7-a41b1894b639
+# ╠═f0ad6c2e-1e99-43cc-a40f-952bdcad5d79
