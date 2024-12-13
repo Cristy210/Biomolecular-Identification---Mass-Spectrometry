@@ -28,7 +28,16 @@ md"""
 """
 
 # ╔═╡ 500d545d-63d8-4781-82d1-c76134ba5d7b
-data_dir = joinpath(@__DIR__, "data", "K-Subspaces")
+data_directory = joinpath(@__DIR__, "data", "Datasets")
+
+# ╔═╡ 94ac05e2-b753-4a94-8c21-06128f5fd505
+dataset_types = readdir(data_directory)
+
+# ╔═╡ 3e8263be-bbe7-4e04-89dd-50ad116351f6
+begin
+	data_dir = joinpath(data_directory,dataset_types[1])
+	print(readdir(data_dir))
+end
 
 # ╔═╡ 622e8247-f9fb-4fec-84ff-5f7cd0ebf7dc
 file_names = ["A.npy", "B.npy", "C.npy", "D.npy", "Noise.npy"]
@@ -231,6 +240,8 @@ end
 # ╠═3564c39a-1def-4613-bc81-87698bc1374a
 # ╟─9e3318f6-ae50-4f2c-a9e1-c713e474ac2a
 # ╠═500d545d-63d8-4781-82d1-c76134ba5d7b
+# ╠═94ac05e2-b753-4a94-8c21-06128f5fd505
+# ╠═3e8263be-bbe7-4e04-89dd-50ad116351f6
 # ╠═622e8247-f9fb-4fec-84ff-5f7cd0ebf7dc
 # ╠═e0ff4d3a-3798-4031-8599-0493489b2ca2
 # ╟─d60a1be3-6294-4458-bf7c-0f62587c9f5a

@@ -48,9 +48,6 @@ D = hcat(Data...)
 # ╔═╡ f86a0699-396a-4f60-b940-d6af17526b68
 D_pos = abs.(D .* (D .> 0))
 
-# ╔═╡ cb2ba153-ede6-4e1b-bc06-22fa4f90c3d7
-
-
 # ╔═╡ 8f31b045-c9c1-44c7-96c1-3433c2188206
 md"""
 ### K-Subspaces
@@ -90,10 +87,10 @@ function KSS(X, d; niters=100, Uinit=polar.(randn.(size(X, 1), collect(d))))
 				U[k] = polar(randn(D, d[k]))
 			else
 				A = view(X, :, ilist) * transpose(view(X, :, ilist))
-				# decomp, history = partialschur(A; nev=d[k], which=:LR)
-				# @show history
+				decomp, history = partialschur(A; nev=d[k], which=:LR)
+				@show history
 				# U[k] = tsvd(view(X, :, ilist), d[k])[1]
-				U[k] = svd(view(X, :, ilist)).U[:,1:d[k]]
+				U[k] = decomp.Q
 			end
 		end
 
@@ -115,15 +112,6 @@ end
 
 # ╔═╡ 169eb774-2299-4a54-9d68-1b1f4ba3dab0
 CACHEDIR = splitext(relpath(@__FILE__))[1]
-
-# ╔═╡ f91fc2c3-7cca-4eec-b91e-c3cbe2208c62
-function cachet(@nospecialize(f), path)
-	whenrun, timed_results = cache(path) do
-		return now(), @timed f()
-	end
-	@info "Was run at $whenrun (runtime = $(timed_results.time) seconds)"
-	timed_results.value
-end
 
 # ╔═╡ a43d05d7-fd37-42c8-bc0c-d32a019b5f8e
 function batch_KSS(X, d; niters=100, nruns=10)
@@ -149,15 +137,17 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	 return runs
 end
 
-# ╔═╡ 15e04665-1547-4ecb-87d1-9fae06c2639c
-fill(2, 5)
+# ╔═╡ f91fc2c3-7cca-4eec-b91e-c3cbe2208c62
+function cachet(@nospecialize(f), path)
+	whenrun, timed_results = cache(path) do
+		return now(), @timed f()
+	end
+	@info "Was run at $whenrun (runtime = $(timed_results.time) seconds)"
+	timed_results.value
+end
 
 # ╔═╡ 0ab76807-7edd-4585-a225-61ee3e439482
-<<<<<<< HEAD
 KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=271)
-=======
-KSS_Clustering = batch_KSS(D, fill(2, 5); niters=200, nruns=100)
->>>>>>> 0c6498ab03985bf2489b0c9fffc63968b055ab75
 
 # ╔═╡ 4fd0a2f9-93b7-4709-afb7-90e6ef61c889
 KSS_Clustering[1]
@@ -188,11 +178,12 @@ A = begin
 end
 
 # ╔═╡ 7e968e6d-2a4f-4ff6-92b5-b045d51ff41b
-begin
-	A_bar = zeros(size(A))
-	sorted_indices = [sortperm(A[:, i], rev=true)[1:top_entries] for i in 1:size(A, 1)]
-	[A_bar[i, 1:top_entries] .= [A[i, val] for (idx, val) in enumerate(sorted_indices[i])] for i in 1:size(A, 1)]
-end
+# begin
+	
+# 	A_bar = zeros(size(A))
+# 	sorted_indices = [sortperm(A[:, i], rev=true)[1:top_entries] for i in 1:size(A, 1)]
+# 	[A_bar[i, 1:top_entries] .= [A[i, val] for (idx, val) in enumerate(sorted_indices[i])] for i in 1:size(A, 1)]
+# end
 
 # ╔═╡ c7e25010-014f-4e40-afa6-5a6a758c486e
 A_bar
@@ -288,14 +279,12 @@ N_label_count_EKSS = [count(x -> (x==i), N_EKSS) / length(N_EKSS) * 100 for i in
 # ╠═bba58c1c-8a6f-4041-b294-2a0af2954f96
 # ╠═1a36bc2e-8f5b-4ba6-aecb-1f35955827b9
 # ╠═f86a0699-396a-4f60-b940-d6af17526b68
-# ╠═cb2ba153-ede6-4e1b-bc06-22fa4f90c3d7
 # ╟─8f31b045-c9c1-44c7-96c1-3433c2188206
 # ╠═f6d0032b-00e9-4f2e-81b5-fd3646ea19cf
 # ╠═a268bde4-37b4-4729-b7f6-4ab339f1c2f4
 # ╠═169eb774-2299-4a54-9d68-1b1f4ba3dab0
 # ╠═a43d05d7-fd37-42c8-bc0c-d32a019b5f8e
 # ╠═f91fc2c3-7cca-4eec-b91e-c3cbe2208c62
-# ╠═15e04665-1547-4ecb-87d1-9fae06c2639c
 # ╠═0ab76807-7edd-4585-a225-61ee3e439482
 # ╠═4fd0a2f9-93b7-4709-afb7-90e6ef61c889
 # ╠═5df47f89-a6dd-492f-a810-5966d12e0340
