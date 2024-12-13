@@ -175,18 +175,6 @@ function KSS(X, d; niters=100, Uinit=polar.(randn.(size(X, 1), collect(d))))
 	return U, c
 end
 
-# ╔═╡ 2210d3ea-4a73-48f3-ac6a-00178cf93eb0
-function cachet(@nospecialize(f), path)
-	whenrun, timed_results = cache(path) do
-		return now(), @timed f()
-	end
-	@info "Was run at $whenrun (runtime = $(timed_results.time) seconds)"
-	timed_results.value
-end
-
-# ╔═╡ a1367151-c6ae-4031-9b9f-c811fc521a7c
-CACHEDIR = splitext(relpath(@__FILE__))[1]
-
 # ╔═╡ 37e72dc4-853c-4239-b4ec-0868a1f45c9b
 function batch_KSS(X, d; niters=100, nruns=10)
 	D, N = size(X)
@@ -210,6 +198,18 @@ function batch_KSS(X, d; niters=100, nruns=10)
 
 	 return runs
 end
+
+# ╔═╡ 2210d3ea-4a73-48f3-ac6a-00178cf93eb0
+function cachet(@nospecialize(f), path)
+	whenrun, timed_results = cache(path) do
+		return now(), @timed f()
+	end
+	@info "Was run at $whenrun (runtime = $(timed_results.time) seconds)"
+	timed_results.value
+end
+
+# ╔═╡ a1367151-c6ae-4031-9b9f-c811fc521a7c
+CACHEDIR = splitext(relpath(@__FILE__))[1]
 
 # ╔═╡ 7515a10d-58db-41a0-87f6-cbd1a25f5d7d
 fill(2, 2)

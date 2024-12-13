@@ -23,7 +23,7 @@ main {
 """
 
 # ╔═╡ cd5b3b47-96d5-4a56-9460-71893b5bd0bc
-data_dir = joinpath(@__DIR__,"data", "new_data")
+data_dir = joinpath(@__DIR__,"data", "K-Subspaces")
 
 # ╔═╡ 58f982b7-b8d2-41ca-aae5-198bf81759fb
 md"""
