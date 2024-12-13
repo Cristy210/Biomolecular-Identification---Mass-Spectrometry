@@ -765,6 +765,12 @@ end
 A_label_count_EKSS = [count(x -> (x==i), A1_Res_SC) / length(A1_Res_SC) * 100 for i in 1:n_clusters]
   ╠═╡ =#
 
+# ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
+# ╠═╡ disabled = true
+#=╠═╡
+D = hcat(A_1, B_1, C_1, D_1)
+  ╠═╡ =#
+
 # ╔═╡ 58464366-c9c2-4a5a-b3cf-bbcec13721b9
 # ╠═╡ disabled = true
 #=╠═╡
@@ -789,12 +795,6 @@ D = permutedims(npzread(D_Path))
 # ╔═╡ fe5de852-e15b-418c-8052-c4a9a21b25a1
 #=╠═╡
 A = permutedims(npzread(A_Path))
-  ╠═╡ =#
-
-# ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
-# ╠═╡ disabled = true
-#=╠═╡
-D = hcat(A_1, B_1, C_1, D_1)
   ╠═╡ =#
 
 # ╔═╡ Cell order:

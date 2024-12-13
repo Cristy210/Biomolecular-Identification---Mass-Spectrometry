@@ -74,7 +74,11 @@ md"
 "
 
 # ╔═╡ dbec1b17-55f3-4e51-a549-375a1dc5c7d7
-D= abs.(D_orig.* (D_orig .> 0))
+#D= D_orig.* (D_orig .> 0) #relu
+
+D = abs.(D_orig) #abs
+
+D = D_orig.^2 #squaring
 
 # ╔═╡ cfa165b8-b93d-4a4c-9bdd-ba72a7555f37
 # CACHEDIR = splitext(relpath(@__FILE__))[1]
