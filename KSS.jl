@@ -54,6 +54,28 @@ C = permutedims(npzread(C_Path))
 # ╔═╡ fb1e68ce-2647-4c1e-93da-be2b77b0c9bf
 N = permutedims(npzread(Noise_path))
 
+<<<<<<< HEAD
+=======
+# ╔═╡ 362dc137-a4a6-4869-ab51-62f0d9a0e87a
+begin
+	D_thres =  abs.(C.* (C .> 0))
+	N_thres = abs.(N.* (N .> 0))
+	#D = abs.(D_abs.* (D_abs .> 0))
+	with_theme() do
+		fig = Figure(; size=(800, 600))
+		ax = Axis(fig[1, 1])
+		#lines!(ax,D_thres[:,6])
+		#lines!(ax, N_thres[:,3])
+	
+		lines!(ax,dropdims(mean(D_thres,dims=2),dims=2))
+		lines!(ax,dropdims(mean(N_thres,dims=2),dims=2))
+	
+		fig
+	end
+	
+end
+
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 # ╔═╡ f4acff73-86ce-4561-96c4-bd71e3242582
 function cachet(@nospecialize(f), path)
 	whenrun, timed_results = cache(path) do
@@ -238,6 +260,22 @@ cluster_labels = [KSS_Clustering[i][2] for i in 1:N_runs]
 N_pixels = length(cluster_labels[1])
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
+# ╔═╡ 17a1698c-27f1-4261-a811-177b133d1406
+#=╠═╡
+begin
+	#lines(A[:,2])
+	lines(mean(A,dims=2))
+end
+  ╠═╡ =#
+
+# ╔═╡ 05a443ff-67a9-4997-a328-60dd60d69b9b
+#=╠═╡
+size(A[:,1])
+  ╠═╡ =#
+
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 # ╔═╡ 28c71d8d-ee1d-4065-ad54-52a2faeca061
 #=╠═╡
 with_theme() do
@@ -302,6 +340,7 @@ L_sym = Symmetric(I - (D_sqrinv * S * D_sqrinv))
   ╠═╡ =#
 
 # ╔═╡ a8b54e3d-ebbd-49ed-b2f4-571a154f8a94
+<<<<<<< HEAD
 #=╠═╡
 begin
 	
@@ -338,6 +377,9 @@ begin
 	fig
 end
   ╠═╡ =#
+=======
+R
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 
 # ╔═╡ d4f6c0be-7f9e-4214-b7b4-577d790047ba
 
@@ -768,6 +810,7 @@ end
 A_label_count_EKSS = [count(x -> (x==i), A1_Res_SC) / length(A1_Res_SC) * 100 for i in 1:n_clusters]
   ╠═╡ =#
 
+<<<<<<< HEAD
 # ╔═╡ fe5de852-e15b-418c-8052-c4a9a21b25a1
 #=╠═╡
 A = permutedims(npzread(A_Path))
@@ -784,6 +827,8 @@ D = permutedims(npzread(D_Path))
 D = hcat(A_1, B_1, C_1, D_1)
   ╠═╡ =#
 
+=======
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 # ╔═╡ 58464366-c9c2-4a5a-b3cf-bbcec13721b9
 # ╠═╡ disabled = true
 #=╠═╡
@@ -799,6 +844,25 @@ A = begin
 	A ./ 100
 end
   ╠═╡ =#
+<<<<<<< HEAD
+=======
+
+# ╔═╡ c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
+#=╠═╡
+D = permutedims(npzread(D_Path))
+  ╠═╡ =#
+
+# ╔═╡ fe5de852-e15b-418c-8052-c4a9a21b25a1
+#=╠═╡
+A = permutedims(npzread(A_Path))
+  ╠═╡ =#
+
+# ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
+# ╠═╡ disabled = true
+#=╠═╡
+D = hcat(A_1, B_1, C_1, D_1)
+  ╠═╡ =#
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 
 # ╔═╡ Cell order:
 # ╠═9c6a9a42-ae6d-11ef-1d5f-311cb3655916
@@ -816,6 +880,9 @@ end
 # ╠═b1c55a46-b277-4835-aadc-772a2bb0a88f
 # ╠═c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
 # ╠═fb1e68ce-2647-4c1e-93da-be2b77b0c9bf
+# ╠═17a1698c-27f1-4261-a811-177b133d1406
+# ╠═362dc137-a4a6-4869-ab51-62f0d9a0e87a
+# ╠═05a443ff-67a9-4997-a328-60dd60d69b9b
 # ╠═51082690-d147-41f3-930a-1d4f0b60b7ba
 # ╠═c670fac6-a8be-4900-a35a-32fe8574afaa
 # ╠═7fb05ff7-c40e-431b-8064-ebc5d7bdbfe2

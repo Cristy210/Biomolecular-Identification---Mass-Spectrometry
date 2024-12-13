@@ -56,6 +56,42 @@ md"""
 # ╔═╡ d51c9771-f91a-4214-a76c-aeefdf0bdd01
 D = hcat(A_1, B_1, C_1, D_1, N)
 
+# ╔═╡ 8f796b29-8b19-45a4-8e22-a0e0100bae7d
+begin
+	
+	
+	# Initialize a figure
+	fig = Figure(resolution = (900, 400))
+	
+	# Create a 1x3 grid layout
+	ax1 = Axis(fig[1, 1], title = "A")
+	ax2 = Axis(fig[1, 2], title = "B")
+	ax3 = Axis(fig[1, 3], title = "Background")
+
+	ax4 = Axis(fig[3, 1], title = "A")
+	ax5 = Axis(fig[3, 2], title = "B")
+	ax6 = Axis(fig[3, 3], title = "Background")
+	vmin,vmax=0,3
+	# Plot heatmaps in each axis
+	hm1=heatmap!(ax1, A_1, colormap = :viridis, colorrange = (vmin, vmax))
+	hm2=heatmap!(ax2, D_1, colormap = :viridis, colorrange = (vmin, vmax))
+	hm3=heatmap!(ax3, N, colormap = :viridis, colorrange = (vmin, vmax))
+	lines!(ax4,mean(A_1,dims=2)[:,1])
+	lines!(ax5,mean(D_1,dims=2)[:,1])
+	lines!(ax6,mean(N,dims=2)[:,1])
+
+	# Add individual color bars for each heatmap
+	Colorbar(fig[2, 1], hm1, label = "", vertical = false)
+	Colorbar(fig[2, 2], hm2, label = "", vertical = false)
+	Colorbar(fig[2, 3], hm3, label = "", vertical = false)
+	
+	# Adjust layout
+	#fig.layoutgap[] = 10  # Optional: Adjust gaps between plots for clarity
+	
+	# Display the figure
+	fig
+end
+
 # ╔═╡ 67f52670-8e97-4665-b5cc-3911837c4ef2
 CACHEDIR = splitext(relpath(@__FILE__))[1]
 
@@ -164,6 +200,7 @@ N_label_count = [count(x -> (x==i), N_Res) / length(N_Res) * 100 for i in 1:5]
 # ╠═c1fb119d-d39f-4f56-923d-a9135151a343
 # ╠═95a9736c-a4af-4386-b8a0-67ee3c069766
 # ╠═d51c9771-f91a-4214-a76c-aeefdf0bdd01
+# ╠═8f796b29-8b19-45a4-8e22-a0e0100bae7d
 # ╠═67f52670-8e97-4665-b5cc-3911837c4ef2
 # ╠═7ad80aa5-801a-49e5-9ec6-ec9f26dd1140
 # ╠═4dd70e78-aab2-4b15-ba0b-b67b859c958b

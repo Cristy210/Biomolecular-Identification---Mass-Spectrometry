@@ -101,6 +101,9 @@ D = npzread(Selected_Paths[file_path])
 # ╔═╡ f5c5c65c-16ad-4789-b074-ede9a4d2b3e7
 B = permutedims(D)
 
+# ╔═╡ c5a17e0c-162d-4f21-b832-0131e5ba8aca
+
+
 # ╔═╡ 40902ee0-af38-420b-ac12-0b9d03cc486c
 md"""
 ### Plotting the heatmap
@@ -314,6 +317,7 @@ md"""
 # ╟─fc12a93a-5614-48bb-9c15-d4c8401dd8a6
 # ╠═02631383-bf6a-4497-bed9-dddd9d1f1926
 # ╠═f5c5c65c-16ad-4789-b074-ede9a4d2b3e7
+# ╠═c5a17e0c-162d-4f21-b832-0131e5ba8aca
 # ╟─40902ee0-af38-420b-ac12-0b9d03cc486c
 # ╠═3bc221ae-042f-472c-8bd3-a6b48274c6a5
 # ╟─5c50fdf3-ab4b-4c64-80a2-fe81a7247615
