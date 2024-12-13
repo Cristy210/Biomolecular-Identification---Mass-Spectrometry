@@ -39,25 +39,15 @@ md"""
 ### Activate Project Directory
 """
 
+# ╔═╡ 2fde9133-c6c0-4b13-bb76-b7dcf3f91c59
+begin
+	dir = joinpath(@__DIR__, "DataFiles", "Data")
+	file_names = ["A.npy", "B.npy", "C.npy", "D.npy"]
+	file_paths = [joinpath(dir, file_name) for file_name in file_names]
+end
+
 # ╔═╡ 3d02e7c2-809b-4fea-b6dd-2b57e80bd9fd
-dir = joinpath(@__DIR__, "data", "new_data")
-
-# ╔═╡ 5cc1c590-7634-452e-9c9f-e3069eb84500
-md"""
-### Signals with different time steps
-"""
-
-# ╔═╡ 508ed756-4f36-409e-a19a-4977ad729c76
-@bind Features Select(["size_2492", "size_3737", "size_7474", "size_14948", "size_74740"])
-
-# ╔═╡ f11d6a5b-85f6-4595-8055-471aec249e8c
-data_dir = joinpath(dir, "$Features")
-
-# ╔═╡ 52cba473-073b-4b79-af5e-15cddba98aab
-file_names = ["A.npy", "B.npy", "C.npy", "D.npy"]
-
-# ╔═╡ e520e943-6231-48c1-81e3-046de58c60b3
-file_paths = [joinpath(data_dir, file_name) for file_name in file_names]
+@bind Preprocessing Select(["Original", "Absolute", "Squaring"])
 
 # ╔═╡ 0192f614-0739-4a64-94eb-b168b9b27023
 Data = [permutedims(npzread(path)) for path in file_paths]
@@ -66,6 +56,17 @@ Data = [permutedims(npzread(path)) for path in file_paths]
 md"""
 ### Data Visualizations
 """
+
+# ╔═╡ 6acf8b8d-77dc-4da9-9fa1-32d31f2d17be
+md"""
+#### Data Matrix for all the .npy files from the agents A,B,C,D
+"""
+
+# ╔═╡ a33479ce-23be-450f-86e3-943a895116fe
+D_Preprocessing = Dict("Original" => hcat(Data...), "Absolute" =>abs.(hcat(Data...)), "Squaring" => hcat(Data...).^2)
+
+# ╔═╡ 783f183b-f14a-44d5-a22f-dd53b0667f2e
+D = D_Preprocessing[Preprocessing]
 
 # ╔═╡ c3038511-149c-4235-b95a-d157ecfb4394
 with_theme() do
@@ -93,15 +94,15 @@ with_theme() do
 
 
 	#Plotting the heatmaps for Agents A, B, C, and D
-	hm1=heatmap!(ax11, Data[1], colormap = :viridis, colorrange = (vmin, vmax))
-	hm2=heatmap!(ax21, Data[2], colormap = :viridis, colorrange = (vmin, vmax))
-	hm3=heatmap!(ax31, Data[3], colormap = :viridis, colorrange = (vmin, vmax))
-	hm4=heatmap!(ax41, Data[4], colormap = :viridis, colorrange = (vmin, vmax))
+	hm1=heatmap!(ax11, D[:, 1:500], colormap = :viridis, colorrange = (vmin, vmax))
+	hm2=heatmap!(ax21, D[:, 501:1000], colormap = :viridis, colorrange = (vmin, vmax))
+	hm3=heatmap!(ax31, D[:, 1001:1500], colormap = :viridis, colorrange = (vmin, vmax))
+	hm4=heatmap!(ax41, D[:, 1501:2000], colormap = :viridis, colorrange = (vmin, vmax))
 
-	lines!(ax13,mean(Data[1],dims=2)[:,1])
-	lines!(ax23,mean(Data[2],dims=2)[:,1])
-	lines!(ax33,mean(Data[3],dims=2)[:,1])
-	lines!(ax43,mean(Data[4],dims=2)[:,1])
+	lines!(ax13,mean(D[:, 1:500],dims=2)[:,1])
+	lines!(ax23,mean(D[:, 501:1000],dims=2)[:,1])
+	lines!(ax33,mean(D[:, 1001:1500],dims=2)[:,1])
+	lines!(ax43,mean(D[:, 1501:2000],dims=2)[:,1])
 
 	Colorbar(grid1[2, 1], hm1, label = "", vertical = false)
 	Colorbar(grid2[2, 1], hm2, label = "", vertical = false)
@@ -124,10 +125,10 @@ with_theme() do
 	grid4 = GridLayout(fig[1, 4]; nrow=1, ncol=1)
 	
 	# Compute the singular values
-	singular_values1 = svd(Data[1]').S
-	singular_values2 = svd(Data[2]').S
-	singular_values3 = svd(Data[3]').S
-	singular_values4 = svd(Data[4]').S
+	singular_values1 = svd(D[:, 1:500]').S
+	singular_values2 = svd(D[:, 501:1000]').S
+	singular_values3 = svd(D[:, 1001:1500]').S
+	singular_values4 = svd(D[:, 1501:2000]').S
 	
 	# Compute the log of the singular values
 	log_singular_values1 = log10.(singular_values1)
@@ -153,35 +154,6 @@ with_theme() do
 	# Display the figure
 	fig
 end
-
-# ╔═╡ 6acf8b8d-77dc-4da9-9fa1-32d31f2d17be
-md"""
-#### Data Matrix for all the .npy files from the agents A,B,C,D, and Noise
-"""
-
-# ╔═╡ 07cc7e63-5e5d-4937-b8e9-9f730d79a180
-D_org = hcat(Data...)
-
-# ╔═╡ 1b443b23-d3b5-48da-97ba-44f4ad498522
-D = abs.(D_org)
-
-# ╔═╡ e03472ea-e75e-49f7-a1c8-9fc5f550f9a0
-_, ∑, V_t= svd(D)
-
-# ╔═╡ c1d4711c-685c-4dec-bae0-5d3f04f45034
-sigma = Diagonal(∑)
-
-# ╔═╡ b8f4b164-7425-4b5b-84b1-9c9d7c599116
-# k_components = 20
-
-# ╔═╡ d485e6b7-6b6c-47cd-9622-6b107297af50
-@bind k_components PlutoUI.Slider(10:10:1000; show_value=true)
-
-# ╔═╡ 6125a633-5eae-470c-9fe9-3ec5a549ab0e
-D_PCA = sigma[1:k_components, 1:k_components] * V_t[1:k_components, :]
-
-# ╔═╡ d0c5ecaa-2f81-40af-8a36-9ce9732d1385
-# CACHEDIR = splitext(relpath(@__FILE__))[1]
 
 # ╔═╡ f83c400c-7c6a-40ec-9784-a690506367de
 md"""
@@ -353,7 +325,7 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	D, N = size(X)
 	runs = Vector{Tuple{Vector{Matrix{Float64}}, Vector{Int}, Float64}}(undef, nruns)
 	@progress for idx in 1:nruns
-		U, c = cachet(joinpath(CACHEDIR, "$Features", "run-$idx.bson")) do
+		U, c = cachet(joinpath(CACHEDIR, "EKSS", "$Preprocessing", "run-$idx.bson")) do
 			Random.seed!(idx)
 			KSS(X, d; niters=niters)
 		end
@@ -372,63 +344,73 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	 return runs
 end
 
-# ╔═╡ dedbc869-46b5-4bbe-9910-e2359e98fb52
-KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
+# ╔═╡ 7a2b7ea0-3ae6-4c3d-b1ba-e4c1bd3828b3
+KSS_runs = 300
 
-# ╔═╡ d61222b1-a337-45ea-811f-5f1a3b7a1ee5
-min_idx_KSS = argmax(KSS_Clustering[i][3] for i in 1:100)
+# ╔═╡ 5c31fed2-e41a-4444-b886-22da7fecd7fc
+KSS_Clustering = batch_KSS(D, fill(2, 4); niters=200, nruns=KSS_runs)
 
-# ╔═╡ 2d9c6f6a-7550-483d-9103-90dcd1c97f44
+# ╔═╡ 689d4ad3-31a2-425c-b6fe-69983797fac7
+min_idx_KSS = argmax(KSS_Clustering[i][3] for i in 1:KSS_runs)
+
+# ╔═╡ 5f6480e8-36a5-4a6b-9aa3-4a5cddf0b6e8
 KSS_Results = KSS_Clustering[min_idx_KSS][2]
 
-# ╔═╡ e162097c-0be7-4ce9-b62e-5e93de8a7b76
-A_KSSRes = KSS_Results[1:500]
+# ╔═╡ 30918205-73f4-44a2-8f7d-6457378c2996
+md"""
+### Ensemble Clustering
+"""
 
-# ╔═╡ 56b8238a-8217-4c54-b6b0-0c1925dadb05
-B_KSSRes = KSS_Results[501:1000]
+# ╔═╡ c2b1858d-c0a8-4ed7-8149-1e0634c1901e
+cluster_labels = [KSS_Clustering[i][2] for i in 1:KSS_runs]
 
-# ╔═╡ 81183c2c-e0a2-4a90-b254-53f1283c3def
-C_KSSRes = KSS_Results[1001:1500]
+# ╔═╡ 73df4b78-a703-44cd-875c-536538225070
+md"""
+#### Co-Clustering Matrix
+"""
 
-# ╔═╡ 7991169c-c1f2-4aa9-b564-f1d462205d51
-D_KSSRes = KSS_Results[1501:2000]
+# ╔═╡ 50367ac4-71d5-405a-b2c9-ebd9717e920f
+N_points = length(cluster_labels[1])
 
-# ╔═╡ 1ec21c9b-fad4-4a4d-9185-d5fdcd60b504
-A_label_count_KSS = [count(x -> (x==i), A_KSSRes) / length(A_KSSRes) * 100 for i in 1:n_clusters]
+# ╔═╡ 29af46ef-91fc-4fb9-8fa4-0cc02b311b30
+length(cluster_labels)
 
-# ╔═╡ a9327d12-ddcf-40b2-844d-5c01849590b6
-B_label_count_KSS = [count(x -> (x==i), B_KSSRes) / length(B_KSSRes) * 100 for i in 1:n_clusters]
+# ╔═╡ 196a6ad0-13a3-4678-8f5e-9212d8be46a3
+Co_Clustering = begin
+	Aff = zeros(Float64, N_points, N_points)
+	for labels in cluster_labels
+		for i in 1:N_points, j in 1:N_points
+			if labels[i] == labels[j]
+				Aff[i, j] += 1
+			end
+		end
+	end
+	Aff ./ length(cluster_labels)
+end
 
-# ╔═╡ fb70b3a0-efdf-42ac-89f1-be4b4fced311
-C_label_count_KSS = [count(x -> (x==i), C_KSSRes) / length(C_KSSRes) * 100 for i in 1:n_clusters]
+# ╔═╡ 8e653298-c048-4f90-8954-58e380f6fc2d
+V_Ensemble = embedding(Co_Clustering, n_clusters)
 
-# ╔═╡ bebedfa9-46d1-447f-b698-c1b829ef5c5c
-D_label_count_KSS = [count(x -> (x==i), D_KSSRes) / length(D_KSSRes) * 100 for i in 1:n_clusters]
+# ╔═╡ 07999787-dfcb-41b6-9125-201d5b307923
+EKSS_clusterings = batchkmeans(permutedims(V_Ensemble), n_clusters; maxiter=1000)
+
+# ╔═╡ 6bf31f57-d627-42cc-af6a-d4088e87edfe
+EKSS_Results = EKSS_clusterings[1].assignments
 
 # ╔═╡ Cell order:
-# ╠═4b89c903-e5d9-4066-b5aa-e6ba8712e056
+# ╟─4b89c903-e5d9-4066-b5aa-e6ba8712e056
 # ╟─57783977-c0f5-43b0-b43c-01d51e5a37cf
 # ╠═1b187d2e-958f-42a5-a266-6f0dd1847a6b
 # ╠═323391e7-2911-455e-813c-4f1b09aa02f6
+# ╠═2fde9133-c6c0-4b13-bb76-b7dcf3f91c59
 # ╠═3d02e7c2-809b-4fea-b6dd-2b57e80bd9fd
-# ╟─5cc1c590-7634-452e-9c9f-e3069eb84500
-# ╠═508ed756-4f36-409e-a19a-4977ad729c76
-# ╠═f11d6a5b-85f6-4595-8055-471aec249e8c
-# ╠═52cba473-073b-4b79-af5e-15cddba98aab
-# ╠═e520e943-6231-48c1-81e3-046de58c60b3
 # ╠═0192f614-0739-4a64-94eb-b168b9b27023
 # ╟─d07d2a4f-95e3-4cbe-92cd-8eb785ae08ba
-# ╟─c3038511-149c-4235-b95a-d157ecfb4394
-# ╠═65320198-78e1-442d-9ca3-5029393e20c2
 # ╟─6acf8b8d-77dc-4da9-9fa1-32d31f2d17be
-# ╠═07cc7e63-5e5d-4937-b8e9-9f730d79a180
-# ╠═1b443b23-d3b5-48da-97ba-44f4ad498522
-# ╠═e03472ea-e75e-49f7-a1c8-9fc5f550f9a0
-# ╠═c1d4711c-685c-4dec-bae0-5d3f04f45034
-# ╠═b8f4b164-7425-4b5b-84b1-9c9d7c599116
-# ╠═d485e6b7-6b6c-47cd-9622-6b107297af50
-# ╠═6125a633-5eae-470c-9fe9-3ec5a549ab0e
-# ╠═d0c5ecaa-2f81-40af-8a36-9ce9732d1385
+# ╠═a33479ce-23be-450f-86e3-943a895116fe
+# ╠═783f183b-f14a-44d5-a22f-dd53b0667f2e
+# ╟─c3038511-149c-4235-b95a-d157ecfb4394
+# ╟─65320198-78e1-442d-9ca3-5029393e20c2
 # ╟─f83c400c-7c6a-40ec-9784-a690506367de
 # ╠═7efcff6a-630f-49aa-bfb9-64c242a5a526
 # ╠═f6143724-4571-4b3d-86a4-6a9a0450bec9
@@ -454,14 +436,16 @@ D_label_count_KSS = [count(x -> (x==i), D_KSSRes) / length(D_KSSRes) * 100 for i
 # ╠═a8c2cb19-febb-40ea-9766-d190c4ccda74
 # ╠═077b8ae4-79ed-4806-8a78-63c58f07c882
 # ╠═16a77379-f74d-4e7f-b175-8e9ed2a02965
-# ╠═dedbc869-46b5-4bbe-9910-e2359e98fb52
-# ╠═d61222b1-a337-45ea-811f-5f1a3b7a1ee5
-# ╠═2d9c6f6a-7550-483d-9103-90dcd1c97f44
-# ╠═e162097c-0be7-4ce9-b62e-5e93de8a7b76
-# ╠═56b8238a-8217-4c54-b6b0-0c1925dadb05
-# ╠═81183c2c-e0a2-4a90-b254-53f1283c3def
-# ╠═7991169c-c1f2-4aa9-b564-f1d462205d51
-# ╠═1ec21c9b-fad4-4a4d-9185-d5fdcd60b504
-# ╠═a9327d12-ddcf-40b2-844d-5c01849590b6
-# ╠═fb70b3a0-efdf-42ac-89f1-be4b4fced311
-# ╠═bebedfa9-46d1-447f-b698-c1b829ef5c5c
+# ╠═7a2b7ea0-3ae6-4c3d-b1ba-e4c1bd3828b3
+# ╠═5c31fed2-e41a-4444-b886-22da7fecd7fc
+# ╠═689d4ad3-31a2-425c-b6fe-69983797fac7
+# ╠═5f6480e8-36a5-4a6b-9aa3-4a5cddf0b6e8
+# ╟─30918205-73f4-44a2-8f7d-6457378c2996
+# ╠═c2b1858d-c0a8-4ed7-8149-1e0634c1901e
+# ╟─73df4b78-a703-44cd-875c-536538225070
+# ╠═50367ac4-71d5-405a-b2c9-ebd9717e920f
+# ╠═29af46ef-91fc-4fb9-8fa4-0cc02b311b30
+# ╠═196a6ad0-13a3-4678-8f5e-9212d8be46a3
+# ╠═8e653298-c048-4f90-8954-58e380f6fc2d
+# ╠═07999787-dfcb-41b6-9125-201d5b307923
+# ╠═6bf31f57-d627-42cc-af6a-d4088e87edfe

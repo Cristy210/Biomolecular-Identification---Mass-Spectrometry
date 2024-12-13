@@ -113,6 +113,15 @@ end
 # ╔═╡ 169eb774-2299-4a54-9d68-1b1f4ba3dab0
 CACHEDIR = splitext(relpath(@__FILE__))[1]
 
+# ╔═╡ f91fc2c3-7cca-4eec-b91e-c3cbe2208c62
+function cachet(@nospecialize(f), path)
+	whenrun, timed_results = cache(path) do
+		return now(), @timed f()
+	end
+	@info "Was run at $whenrun (runtime = $(timed_results.time) seconds)"
+	timed_results.value
+end
+
 # ╔═╡ a43d05d7-fd37-42c8-bc0c-d32a019b5f8e
 function batch_KSS(X, d; niters=100, nruns=10)
 	D, N = size(X)
@@ -137,6 +146,8 @@ function batch_KSS(X, d; niters=100, nruns=10)
 	 return runs
 end
 
+<<<<<<< HEAD
+=======
 # ╔═╡ f91fc2c3-7cca-4eec-b91e-c3cbe2208c62
 function cachet(@nospecialize(f), path)
 	whenrun, timed_results = cache(path) do
@@ -151,6 +162,7 @@ end
 KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=271)
 =======
 
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 # ╔═╡ 15e04665-1547-4ecb-87d1-9fae06c2639c
 fill(2, 5)
 

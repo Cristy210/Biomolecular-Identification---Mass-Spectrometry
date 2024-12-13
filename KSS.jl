@@ -54,6 +54,8 @@ C = permutedims(npzread(C_Path))
 # ╔═╡ fb1e68ce-2647-4c1e-93da-be2b77b0c9bf
 N = permutedims(npzread(Noise_path))
 
+<<<<<<< HEAD
+=======
 # ╔═╡ 362dc137-a4a6-4869-ab51-62f0d9a0e87a
 begin
 	D_thres =  abs.(C.* (C .> 0))
@@ -73,6 +75,7 @@ begin
 	
 end
 
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 # ╔═╡ f4acff73-86ce-4561-96c4-bd71e3242582
 function cachet(@nospecialize(f), path)
 	whenrun, timed_results = cache(path) do
@@ -257,6 +260,8 @@ cluster_labels = [KSS_Clustering[i][2] for i in 1:N_runs]
 N_pixels = length(cluster_labels[1])
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
 # ╔═╡ 17a1698c-27f1-4261-a811-177b133d1406
 #=╠═╡
 begin
@@ -270,6 +275,7 @@ end
 size(A[:,1])
   ╠═╡ =#
 
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 # ╔═╡ 28c71d8d-ee1d-4065-ad54-52a2faeca061
 #=╠═╡
 with_theme() do
@@ -334,7 +340,46 @@ L_sym = Symmetric(I - (D_sqrinv * S * D_sqrinv))
   ╠═╡ =#
 
 # ╔═╡ a8b54e3d-ebbd-49ed-b2f4-571a154f8a94
+<<<<<<< HEAD
+#=╠═╡
+begin
+	
+	
+	# Initialize a figure
+	fig = Figure(resolution = (900, 400))
+	
+	# Create a 1x3 grid layout
+	ax1 = Axis(fig[1, 1], title = "Protein")
+	ax2 = Axis(fig[1, 2], title = "Bacteria")
+	ax3 = Axis(fig[1, 3], title = "Background")
+
+	ax4 = Axis(fig[3, 1], title = "Protein")
+	ax5 = Axis(fig[3, 2], title = "Bacteria")
+	ax6 = Axis(fig[3, 3], title = "Background")
+	vmin,vmax=0,3
+	# Plot heatmaps in each axis
+	hm1=heatmap!(ax1, A, colormap = :viridis, colorrange = (vmin, vmax))
+	hm2=heatmap!(ax2, C, colormap = :viridis, colorrange = (vmin, vmax))
+	hm3=heatmap!(ax3, N, colormap = :viridis, colorrange = (vmin, vmax))
+	lines!(ax4,mean(A,dims=2)[:,1])
+	lines!(ax5,mean(C,dims=2)[:,1])
+	lines!(ax6,mean(N,dims=2)[:,1])
+
+	# Add individual color bars for each heatmap
+	Colorbar(fig[2, 1], hm1, label = "", vertical = false)
+	Colorbar(fig[2, 2], hm2, label = "", vertical = false)
+	Colorbar(fig[2, 3], hm3, label = "", vertical = false)
+	
+	# Adjust layout
+	#fig.layoutgap[] = 10  # Optional: Adjust gaps between plots for clarity
+	
+	# Display the figure
+	fig
+end
+  ╠═╡ =#
+=======
 R
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 
 # ╔═╡ d4f6c0be-7f9e-4214-b7b4-577d790047ba
 
@@ -765,12 +810,31 @@ end
 A_label_count_EKSS = [count(x -> (x==i), A1_Res_SC) / length(A1_Res_SC) * 100 for i in 1:n_clusters]
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+# ╔═╡ fe5de852-e15b-418c-8052-c4a9a21b25a1
+#=╠═╡
+A = permutedims(npzread(A_Path))
+  ╠═╡ =#
+
+# ╔═╡ c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
+#=╠═╡
+D = permutedims(npzread(D_Path))
+  ╠═╡ =#
+
+>>>>>>> 098d81de9873c0549b4cee7086f53149908c5da8
 # ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
 # ╠═╡ disabled = true
 #=╠═╡
 D = hcat(A_1, B_1, C_1, D_1)
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
+>>>>>>> 098d81de9873c0549b4cee7086f53149908c5da8
 # ╔═╡ 58464366-c9c2-4a5a-b3cf-bbcec13721b9
 # ╠═╡ disabled = true
 #=╠═╡
@@ -786,6 +850,8 @@ A = begin
 	A ./ 100
 end
   ╠═╡ =#
+<<<<<<< HEAD
+=======
 
 # ╔═╡ c28b4d5f-6bf1-4cbe-aa8c-dfb9e28a3caa
 #=╠═╡
@@ -797,6 +863,16 @@ D = permutedims(npzread(D_Path))
 A = permutedims(npzread(A_Path))
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
+# ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
+# ╠═╡ disabled = true
+#=╠═╡
+D = hcat(A_1, B_1, C_1, D_1)
+  ╠═╡ =#
+>>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
+
+>>>>>>> 098d81de9873c0549b4cee7086f53149908c5da8
 # ╔═╡ Cell order:
 # ╠═9c6a9a42-ae6d-11ef-1d5f-311cb3655916
 # ╠═18d70e9e-b154-4993-a3fb-baa1003f7eed
