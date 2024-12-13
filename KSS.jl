@@ -811,6 +811,8 @@ A_label_count_EKSS = [count(x -> (x==i), A1_Res_SC) / length(A1_Res_SC) * 100 fo
   ╠═╡ =#
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 # ╔═╡ fe5de852-e15b-418c-8052-c4a9a21b25a1
 #=╠═╡
 A = permutedims(npzread(A_Path))
@@ -821,14 +823,18 @@ A = permutedims(npzread(A_Path))
 D = permutedims(npzread(D_Path))
   ╠═╡ =#
 
+>>>>>>> 098d81de9873c0549b4cee7086f53149908c5da8
 # ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
 # ╠═╡ disabled = true
 #=╠═╡
 D = hcat(A_1, B_1, C_1, D_1)
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
+>>>>>>> 098d81de9873c0549b4cee7086f53149908c5da8
 # ╔═╡ 58464366-c9c2-4a5a-b3cf-bbcec13721b9
 # ╠═╡ disabled = true
 #=╠═╡
@@ -857,6 +863,8 @@ D = permutedims(npzread(D_Path))
 A = permutedims(npzread(A_Path))
   ╠═╡ =#
 
+<<<<<<< HEAD
+=======
 # ╔═╡ c670fac6-a8be-4900-a35a-32fe8574afaa
 # ╠═╡ disabled = true
 #=╠═╡
@@ -864,6 +872,7 @@ D = hcat(A_1, B_1, C_1, D_1)
   ╠═╡ =#
 >>>>>>> 35c423c1d35eac955ec24ea29a86db4fcfcd5885
 
+>>>>>>> 098d81de9873c0549b4cee7086f53149908c5da8
 # ╔═╡ Cell order:
 # ╠═9c6a9a42-ae6d-11ef-1d5f-311cb3655916
 # ╠═18d70e9e-b154-4993-a3fb-baa1003f7eed

@@ -61,57 +61,6 @@ D = permutedims(npzread(D_Path))
 # ╔═╡ 9b8e2a3a-1df8-4bbb-a1df-c79f9a677c07
 N = permutedims(npzread(Noise_path))
 
-# ╔═╡ 24189239-67e3-482c-83f2-5fb5edb1e561
-function low_rank_approx(data,k)
-	U, S, V = svd(data)
-
-	U_k = U[:, 1:k]        # First k columns of U
-	S_k = Diagonal(S[1:k]) # First k singular values (diagonal matrix)
-	V_k = V[:, 1:k]        # First k columns of V
-	
-	# Reconstruct the k-rank approximation
-	data_k = U_k * S_k * V_k'
-	return data_k'
-end
-
-
-# ╔═╡ e787dd88-bed7-40e4-adf9-827420d8f4b0
-rank=5
-
-# ╔═╡ 50d5234c-b6d7-49fe-af2d-b5b62f44c7c3
-@bind idx PlutoUI.Slider(1:500; show_value=true)
-
-# ╔═╡ 5390b452-996c-4828-b84b-3eaf1d152380
-begin
-	
-	using GLMakie  # Import this to use sliders and other interactive components
-
-	# Create a figure and axis layout
-	fig4 = Figure(resolution = (1200, 500))
-	ax20 = Axis(fig4[1, 1], title = "Plot 1")
-	ax21 = Axis(fig4[1, 2], title = "Plot 2")
-	ax22 = Axis(fig4[1, 3], title = "Plot 3")
-	
-	# Initialize plots (dummy data to start)
-	line1 = lines!(ax20, A'[1, :])
-	line2 = lines!(ax21, C'[1, :])
-	line3 = lines!(ax22, N'[1, :])
-	
-	# Add a slider to control the index
-	
-
-	# Update function for the slider
-	# idx=3
-	line1[1] = A'[idx, :]
-	line2[1] = C'[idx, :]
-	line3[1] = N'[idx, :]
-	
-	
-	# Display the figure
-	fig4
-	
-end
-
 # ╔═╡ 5f0d6b10-4159-498b-924e-435c767c082e
 begin
 	
@@ -180,6 +129,23 @@ begin
 	
 end
 
+# ╔═╡ 24189239-67e3-482c-83f2-5fb5edb1e561
+function low_rank_approx(data,k)
+	U, S, V = svd(data)
+
+	U_k = U[:, 1:k]        # First k columns of U
+	S_k = Diagonal(S[1:k]) # First k singular values (diagonal matrix)
+	V_k = V[:, 1:k]        # First k columns of V
+	
+	# Reconstruct the k-rank approximation
+	data_k = U_k * S_k * V_k'
+	return data_k'
+end
+
+
+# ╔═╡ e787dd88-bed7-40e4-adf9-827420d8f4b0
+rank=5
+
 # ╔═╡ 5f0b3ffc-7f9d-4bd7-b0be-2bbbd247464c
 begin
 	
@@ -216,6 +182,40 @@ begin
 	
 	# Display the figure
 	fig3
+end
+
+# ╔═╡ 50d5234c-b6d7-49fe-af2d-b5b62f44c7c3
+@bind idx PlutoUI.Slider(1:500; show_value=true)
+
+# ╔═╡ 5390b452-996c-4828-b84b-3eaf1d152380
+begin
+	
+	using GLMakie  # Import this to use sliders and other interactive components
+
+	# Create a figure and axis layout
+	fig4 = Figure(resolution = (1200, 500))
+	ax20 = Axis(fig4[1, 1], title = "Plot 1")
+	ax21 = Axis(fig4[1, 2], title = "Plot 2")
+	ax22 = Axis(fig4[1, 3], title = "Plot 3")
+	
+	# Initialize plots (dummy data to start)
+	line1 = lines!(ax20, A'[1, :])
+	line2 = lines!(ax21, C'[1, :])
+	line3 = lines!(ax22, N'[1, :])
+	
+	# Add a slider to control the index
+	
+
+	# Update function for the slider
+	# idx=3
+	line1[1] = A'[idx, :]
+	line2[1] = C'[idx, :]
+	line3[1] = N'[idx, :]
+	
+	
+	# Display the figure
+	fig4
+	
 end
 
 # ╔═╡ Cell order:
