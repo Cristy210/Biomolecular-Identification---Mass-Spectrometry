@@ -62,6 +62,98 @@ file_paths = [joinpath(data_dir, file_name) for file_name in file_names]
 # ╔═╡ 0192f614-0739-4a64-94eb-b168b9b27023
 Data = [permutedims(npzread(path)) for path in file_paths]
 
+# ╔═╡ d07d2a4f-95e3-4cbe-92cd-8eb785ae08ba
+md"""
+### Data Visualizations
+"""
+
+# ╔═╡ c3038511-149c-4235-b95a-d157ecfb4394
+with_theme() do
+	fig = Figure(; size=(1300, 700))
+
+	#Setting up the Gridlayouts one for each Agent
+	grid1 = GridLayout(fig[1, 1]; nrow=3, ncol=1)
+    grid2 = GridLayout(fig[1, 2]; nrow=3, ncol=1)
+	grid3 = GridLayout(fig[1, 3]; nrow=3, ncol=1)
+	grid4 = GridLayout(fig[1, 4]; nrow=3, ncol=1)
+
+	vmin,vmax=0,3
+
+	#Setting up the axis for heatmaps
+	ax11 = Axis(grid1[1, 1], title = "Protein A")
+	ax21 = Axis(grid2[1, 1], title = "Protein B")
+	ax31 = Axis(grid3[1, 1], title = "Bacteria C")
+	ax41 = Axis(grid4[1, 1], title = "Bacteria D")
+
+	#Setting up the axis for plotting the peaks
+	ax13 = Axis(grid1[3, 1])
+	ax23 = Axis(grid2[3, 1])
+	ax33 = Axis(grid3[3, 1])
+	ax43 = Axis(grid4[3, 1])
+
+
+	#Plotting the heatmaps for Agents A, B, C, and D
+	hm1=heatmap!(ax11, Data[1], colormap = :viridis, colorrange = (vmin, vmax))
+	hm2=heatmap!(ax21, Data[2], colormap = :viridis, colorrange = (vmin, vmax))
+	hm3=heatmap!(ax31, Data[3], colormap = :viridis, colorrange = (vmin, vmax))
+	hm4=heatmap!(ax41, Data[4], colormap = :viridis, colorrange = (vmin, vmax))
+
+	lines!(ax13,mean(Data[1],dims=2)[:,1])
+	lines!(ax23,mean(Data[2],dims=2)[:,1])
+	lines!(ax33,mean(Data[3],dims=2)[:,1])
+	lines!(ax43,mean(Data[4],dims=2)[:,1])
+
+	Colorbar(grid1[2, 1], hm1, label = "", vertical = false)
+	Colorbar(grid2[2, 1], hm2, label = "", vertical = false)
+	Colorbar(grid3[2, 1], hm3, label = "", vertical = false)
+	Colorbar(grid4[2, 1], hm4, label = "", vertical = false)
+
+	fig
+end
+
+# ╔═╡ 65320198-78e1-442d-9ca3-5029393e20c2
+with_theme() do
+	fig = Figure(; size = (950,400))
+
+	supertitle = Label(fig[0, 1:4], "Log Singular Values", fontsize=20, halign=:center, valign=:top, )
+
+	#Setting up the Gridlayouts one for each Agent
+	grid1 = GridLayout(fig[1, 1]; nrow=1, ncol=1)
+    grid2 = GridLayout(fig[1, 2]; nrow=1, ncol=1)
+	grid3 = GridLayout(fig[1, 3]; nrow=1, ncol=1)
+	grid4 = GridLayout(fig[1, 4]; nrow=1, ncol=1)
+	
+	# Compute the singular values
+	singular_values1 = svd(Data[1]').S
+	singular_values2 = svd(Data[2]').S
+	singular_values3 = svd(Data[3]').S
+	singular_values4 = svd(Data[4]').S
+	
+	# Compute the log of the singular values
+	log_singular_values1 = log10.(singular_values1)
+	log_singular_values2 = log10.(singular_values2)
+	log_singular_values3 = log10.(singular_values3)
+	log_singular_values3 = log10.(singular_values4)
+	
+	# Initialize a figure with size
+	
+	
+	# Create axes for each subplot
+	ax1 = Axis(grid1[1, 1], title = "Protein A", xlabel = "Index", ylabel = "Log10(Singular Value)")
+	ax2 = Axis(grid2[1, 1], title = "Protein B", xlabel = "Index")
+	ax3 = Axis(grid3[1, 1], title = "Bacteria C", xlabel = "Index")
+	ax4 = Axis(grid4[1, 1], title = "Bacteria D", xlabel = "Index")
+	
+	# Plot log singular values on each axis
+	scatter!(ax1, 1:length(log_singular_values1), log_singular_values1, color = :blue)
+	scatter!(ax2, 1:length(log_singular_values2), log_singular_values2, color = :red)
+	scatter!(ax3, 1:length(log_singular_values3), log_singular_values3, color = :green)
+	scatter!(ax4, 1:length(log_singular_values3), log_singular_values3, color = :black)
+	
+	# Display the figure
+	fig
+end
+
 # ╔═╡ 6acf8b8d-77dc-4da9-9fa1-32d31f2d17be
 md"""
 #### Data Matrix for all the .npy files from the agents A,B,C,D, and Noise
@@ -71,10 +163,10 @@ md"""
 D_org = hcat(Data...)
 
 # ╔═╡ 1b443b23-d3b5-48da-97ba-44f4ad498522
-D_abs = abs.(D_org.* (D_org .> 0))
+D = abs.(D_org)
 
 # ╔═╡ e03472ea-e75e-49f7-a1c8-9fc5f550f9a0
-_, ∑, V_t= svd(D_abs)
+_, ∑, V_t= svd(D)
 
 # ╔═╡ c1d4711c-685c-4dec-bae0-5d3f04f45034
 sigma = Diagonal(∑)
@@ -86,7 +178,7 @@ sigma = Diagonal(∑)
 @bind k_components PlutoUI.Slider(10:10:1000; show_value=true)
 
 # ╔═╡ 6125a633-5eae-470c-9fe9-3ec5a549ab0e
-D = sigma[1:k_components, 1:k_components] * V_t[1:k_components, :]
+D_PCA = sigma[1:k_components, 1:k_components] * V_t[1:k_components, :]
 
 # ╔═╡ d0c5ecaa-2f81-40af-8a36-9ce9732d1385
 # CACHEDIR = splitext(relpath(@__FILE__))[1]
@@ -171,16 +263,16 @@ C1_Res = SC_Results[1001:1500]
 D1_Res = SC_Results[1501:2000]
 
 # ╔═╡ cb92b31d-f44d-4c6f-b181-4fa1cbdd1c52
-A_label_count = [count(x -> (x==i), A1_Res) / length(A1_Res) * 100 for i in 1:n_clusters]
+A_label_count_SC = [count(x -> (x==i), A1_Res) / length(A1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 3990a38b-c85a-4115-9c47-6cb39a29b6e3
-B_label_count = [count(x -> (x==i), B1_Res) / length(B1_Res) * 100 for i in 1:n_clusters]
+B_label_count_SC = [count(x -> (x==i), B1_Res) / length(B1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ f041f163-5802-44b0-b417-f2f16575dfe0
-C_label_count = [count(x -> (x==i), C1_Res) / length(C1_Res) * 100 for i in 1:n_clusters]
+C_label_count_SC = [count(x -> (x==i), C1_Res) / length(C1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ 84a51ff3-72ff-4636-ba57-14e7a6bb5958
-D_label_count = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:n_clusters]
+D_label_count_SC = [count(x -> (x==i), D1_Res) / length(D1_Res) * 100 for i in 1:n_clusters]
 
 # ╔═╡ e17c9163-7b1d-4672-9846-b526c9f24343
 md"""
@@ -283,6 +375,36 @@ end
 # ╔═╡ dedbc869-46b5-4bbe-9910-e2359e98fb52
 KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
 
+# ╔═╡ d61222b1-a337-45ea-811f-5f1a3b7a1ee5
+min_idx_KSS = argmax(KSS_Clustering[i][3] for i in 1:100)
+
+# ╔═╡ 2d9c6f6a-7550-483d-9103-90dcd1c97f44
+KSS_Results = KSS_Clustering[min_idx_KSS][2]
+
+# ╔═╡ e162097c-0be7-4ce9-b62e-5e93de8a7b76
+A_KSSRes = KSS_Results[1:500]
+
+# ╔═╡ 56b8238a-8217-4c54-b6b0-0c1925dadb05
+B_KSSRes = KSS_Results[501:1000]
+
+# ╔═╡ 81183c2c-e0a2-4a90-b254-53f1283c3def
+C_KSSRes = KSS_Results[1001:1500]
+
+# ╔═╡ 7991169c-c1f2-4aa9-b564-f1d462205d51
+D_KSSRes = KSS_Results[1501:2000]
+
+# ╔═╡ 1ec21c9b-fad4-4a4d-9185-d5fdcd60b504
+A_label_count_KSS = [count(x -> (x==i), A_KSSRes) / length(A_KSSRes) * 100 for i in 1:n_clusters]
+
+# ╔═╡ a9327d12-ddcf-40b2-844d-5c01849590b6
+B_label_count_KSS = [count(x -> (x==i), B_KSSRes) / length(B_KSSRes) * 100 for i in 1:n_clusters]
+
+# ╔═╡ fb70b3a0-efdf-42ac-89f1-be4b4fced311
+C_label_count_KSS = [count(x -> (x==i), C_KSSRes) / length(C_KSSRes) * 100 for i in 1:n_clusters]
+
+# ╔═╡ bebedfa9-46d1-447f-b698-c1b829ef5c5c
+D_label_count_KSS = [count(x -> (x==i), D_KSSRes) / length(D_KSSRes) * 100 for i in 1:n_clusters]
+
 # ╔═╡ Cell order:
 # ╠═4b89c903-e5d9-4066-b5aa-e6ba8712e056
 # ╟─57783977-c0f5-43b0-b43c-01d51e5a37cf
@@ -295,6 +417,9 @@ KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
 # ╠═52cba473-073b-4b79-af5e-15cddba98aab
 # ╠═e520e943-6231-48c1-81e3-046de58c60b3
 # ╠═0192f614-0739-4a64-94eb-b168b9b27023
+# ╟─d07d2a4f-95e3-4cbe-92cd-8eb785ae08ba
+# ╟─c3038511-149c-4235-b95a-d157ecfb4394
+# ╠═65320198-78e1-442d-9ca3-5029393e20c2
 # ╟─6acf8b8d-77dc-4da9-9fa1-32d31f2d17be
 # ╠═07cc7e63-5e5d-4937-b8e9-9f730d79a180
 # ╠═1b443b23-d3b5-48da-97ba-44f4ad498522
@@ -330,3 +455,13 @@ KSS_Clustering = batch_KSS(D, fill(1, 5); niters=200, nruns=100)
 # ╠═077b8ae4-79ed-4806-8a78-63c58f07c882
 # ╠═16a77379-f74d-4e7f-b175-8e9ed2a02965
 # ╠═dedbc869-46b5-4bbe-9910-e2359e98fb52
+# ╠═d61222b1-a337-45ea-811f-5f1a3b7a1ee5
+# ╠═2d9c6f6a-7550-483d-9103-90dcd1c97f44
+# ╠═e162097c-0be7-4ce9-b62e-5e93de8a7b76
+# ╠═56b8238a-8217-4c54-b6b0-0c1925dadb05
+# ╠═81183c2c-e0a2-4a90-b254-53f1283c3def
+# ╠═7991169c-c1f2-4aa9-b564-f1d462205d51
+# ╠═1ec21c9b-fad4-4a4d-9185-d5fdcd60b504
+# ╠═a9327d12-ddcf-40b2-844d-5c01849590b6
+# ╠═fb70b3a0-efdf-42ac-89f1-be4b4fced311
+# ╠═bebedfa9-46d1-447f-b698-c1b829ef5c5c
