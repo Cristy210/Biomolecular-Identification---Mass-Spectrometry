@@ -1,6 +1,6 @@
 ## Unsupervised Learning Techniques to identify Biological Agents for Mass Spectrometry
 
-### This project explores the application of unsupervised learning techniques to identify and classify biological agents from mass spectrometry data. Our dataset consists of mass spectra for two proteins (Protein A and B) and two bacterial agents (Bacteria C and D). 
+### This repository explores the application of unsupervised learning techniques to identify and classify biological agents from mass spectrometry data. Our dataset consists of mass spectra for two proteins (Protein A and B) and two bacterial agents (Bacteria C and D). 
 
 ### Below is an illustration of the mass spectra for the four agents.
 
