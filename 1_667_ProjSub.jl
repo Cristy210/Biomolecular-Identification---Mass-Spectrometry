@@ -72,7 +72,7 @@ md"""
 
 # ╔═╡ 2fde9133-c6c0-4b13-bb76-b7dcf3f91c59
 begin
-	dir = joinpath(@__DIR__, "DataFiles", "Data")
+	dir = joinpath(@__DIR__, "data", "DataFiles", "Biological Data")
 	file_names = ["A.npy", "B.npy", "C.npy", "D.npy"]
 	file_paths = [joinpath(dir, file_name) for file_name in file_names]
 end
