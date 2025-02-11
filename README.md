@@ -11,4 +11,4 @@
 
 ![Heatmap Vs Spectral Plots](/Visualizations/Heatmaps_Spectral%20Plots.png)
 
-![View Ensemble KSS Julia Notebook as a webpage](https://cristy210.github.io/Biomolecular-Identification---Mass-Spectrometry/1_667_ProjSub.html)
+[**View Ensemble KSS Julia Notebook as a webpage**](https://cristy210.github.io/Biomolecular-Identification---Mass-Spectrometry/1_667_ProjSub.html)
