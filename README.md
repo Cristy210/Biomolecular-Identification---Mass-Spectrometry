@@ -9,7 +9,7 @@
 - **Top Panel**: Heatmaps displaying the intensity patterns of the mass spectra for each biological agent.
 - **Number of Spectral Bands**: Corresponding spectral plots highlighting key intensity peaks and variations. These patterns serve as distinct features for differentiation.
 
-<img src="Visualizations/Heatmaps_Spectral%20Plots.png" alt="Heatmap Vs Spectral Plots" width="600"/>
+<img src="Visualizations/Heatmaps_Spectral%20Plots.png" alt="Heatmap Vs Spectral Plots" width="1000"/>
 
 
 <!-- [Heatmap Vs Spectral Plots](Visualizations/Heatmaps_Spectral%20Plots.png) -->
