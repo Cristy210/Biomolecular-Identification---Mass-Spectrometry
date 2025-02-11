@@ -1,0 +1,31 @@
+/* Custom styles for Architect theme */
+
+/* Modify body styling */
+body {
+    font-family: "Arial", sans-serif !important;  /* Change font */
+    font-size: 18px !important;  /* Change text size */
+    margin-top: 10px !important; /* Reduce top margin */
+    margin-left: 20px !important; /* Add left margin */
+    margin-right: 20px !important; /* Add right margin */
+}
+
+/* Adjust header styles */
+header h1 {
+    font-size: 40px !important;
+    text-align: center !important;
+    margin-top: 5px !important; /* Reduce space above title */
+}
+
+/* Adjust subtitle */
+header h2 {
+    font-size: 22px !important;
+    text-align: center;
+    color: #ffffff !important;
+}
+
+/* Reduce spacing inside content */
+#main-content {
+    margin: 0 auto;
+    padding: 10px;
+    max-width: 1000px; /* Keep the content area limited */
+}
