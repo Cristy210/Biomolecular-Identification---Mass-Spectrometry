@@ -476,7 +476,8 @@ function plot_confusion_matrix(SC_Results,KSS_Results,EKSS_Results)
 
 	# Initialize a figure with size
 	fig = Figure(size = (800,400))
-	Label(fig[0, 1:3], "Data Preprocessing - $Preprocessing", fontsize = 20, halign = :center,valign = :center)
+	Label(fig[0, 1:3], "Confusion Matrix — Pre-Processing: $Preprocessing", fontsize = 18, font = :bold, halign = :center,valign = :center)
+	# Label(fig[0, 1:3], "Data Preprocessing - $Preprocessing", fontsize = 20, halign = :center,valign = :center)
 
 	# Create axes for each subplot
 	ax1 = Axis(fig[1, 1],title = "Spectral Clustering",
@@ -526,7 +527,7 @@ function plot_coclustering_matrix(co_clustering_matrix)
 	fig = Figure(size = (400,400))
 	
 	# Create axes for each subplot
-	ax1 = Axis(fig[1, 1],title = "EKSS Co-Clustering Matrix",
+	ax1 = Axis(fig[1, 1],title = "EKSS Co-Clustering Matrix — $Preprocessing",
     xlabel = "Agents",ylabel = "Agents" ,xticks = (250:500:1750, ["A", "B", "C", "D"])
 	,yticks = (250:500:1750, ["A", "B", "C", "D"])  )
 	hm1=heatmap!(ax1, co_clustering_matrix, colormap = :viridis)
