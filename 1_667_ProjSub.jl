@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.3
+# v0.20.8
 
 using Markdown
 using InteractiveUtils
@@ -7,7 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     #! format: off
-    quote
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
@@ -40,10 +40,6 @@ main {
 # ╔═╡ 2b3a9820-15bd-4215-b723-8184e59e3bf4
 md"""
 # Ensemble K-Subpsaces
-#### ELEG667 Matrix and Tensor Methods
-##### - Kyle Regan
-##### - Christian Newman-Sanders
-##### - Cristy Mathey
 """
 
 # ╔═╡ dbe2c43a-7f5d-443b-9253-dc1c630cdb15
@@ -56,8 +52,6 @@ md"
 - Our hypothesis was that Ensemble KSS will yield the best results.
 
 - We used three data preproccesing methods: Original Data, Element-wise Absolute Value, and Element-wise Squaring
-###### Data is property of Zeteo Tech Inc and results from this project should not be published. 
-
 "
 
 # ╔═╡ 8c5e5e6c-56f0-4734-aeb4-fe066d35a849
@@ -213,6 +207,30 @@ begin
 	n_clusters = 4;
 	A = transpose(Norm_mat) * Norm_mat
 end
+
+# ╔═╡ cf684a5d-169f-469b-8a25-49ee85a4d1d4
+col_n1 = [norm(D[:, i]) for i in 1:size(D, 2)]
+
+# ╔═╡ f8445257-04dd-4d7d-9616-6e3f161af449
+NV1 = [D[:, i] ./ col_n1[i] for i in 1:size(D, 2)]
+
+# ╔═╡ e47a9ae9-f18a-4b7b-b2c1-fda2cd5b5c6f
+NV2 = [xi ./ col_n1[i] for (i, xi) in pairs(eachcol(D))]
+
+# ╔═╡ d87cf82a-31c4-400f-bc80-4a848100d03c
+NM = hcat(NV1...)
+
+# ╔═╡ b6eab666-019e-4fb0-96cf-3d530bb1c815
+A1 = transpose(NM) * NM
+
+# ╔═╡ f0f4cee8-ecbc-46b9-b81a-bdd4f9713657
+size(NM)
+
+# ╔═╡ 1a13cb2e-f780-42e1-84dd-2444aee6f111
+NV1 == NV2
+
+# ╔═╡ 43c8139f-f29e-4364-9e11-76685be54fad
+
 
 # ╔═╡ e0bec9ff-0442-4134-bf4e-636ec9bf6eeb
 function embedding(A, k)
@@ -593,6 +611,9 @@ function accel_batch_KSS(X, d; niters=100, nruns=10)
      return runs
 end
 
+# ╔═╡ 3303b058-0fb2-4ebd-85e3-8a6f609c1d05
+
+
 # ╔═╡ Cell order:
 # ╟─4b89c903-e5d9-4066-b5aa-e6ba8712e056
 # ╟─2b3a9820-15bd-4215-b723-8184e59e3bf4
@@ -613,9 +634,17 @@ end
 # ╟─65320198-78e1-442d-9ca3-5029393e20c2
 # ╟─f83c400c-7c6a-40ec-9784-a690506367de
 # ╠═7efcff6a-630f-49aa-bfb9-64c242a5a526
+# ╠═cf684a5d-169f-469b-8a25-49ee85a4d1d4
+# ╠═f8445257-04dd-4d7d-9616-6e3f161af449
+# ╠═e47a9ae9-f18a-4b7b-b2c1-fda2cd5b5c6f
+# ╠═d87cf82a-31c4-400f-bc80-4a848100d03c
+# ╠═b6eab666-019e-4fb0-96cf-3d530bb1c815
+# ╠═f0f4cee8-ecbc-46b9-b81a-bdd4f9713657
+# ╠═1a13cb2e-f780-42e1-84dd-2444aee6f111
+# ╠═43c8139f-f29e-4364-9e11-76685be54fad
 # ╠═e0bec9ff-0442-4134-bf4e-636ec9bf6eeb
 # ╠═3ffbeab0-c815-43f1-97d4-441969bea6b1
-# ╟─cf041b97-409f-4c30-96bb-40ed0f1ec441
+# ╠═cf041b97-409f-4c30-96bb-40ed0f1ec441
 # ╠═d1e78fd8-3403-40b2-9acf-43204caf5bf1
 # ╟─45cda150-03ec-4a25-9135-c037eae1e817
 # ╠═1192b8a0-7d4f-45a2-a506-70846ae0d206
@@ -650,3 +679,4 @@ end
 # ╠═3011a102-ce11-4df1-8a1c-2624c3920430
 # ╠═3ca236ff-bd38-4bd5-b820-467fee4fb35a
 # ╠═1b07c0b1-d128-4add-a8d4-5a22218014f8
+# ╠═3303b058-0fb2-4ebd-85e3-8a6f609c1d05
